@@ -6,7 +6,6 @@ import typing
 import csv
 
 app = FastAPI()
-geocoder = ArcGIS()
 
 
 @app.get("/")
@@ -24,6 +23,7 @@ async def geocode(address: str) -> dict[str : typing.Union[str, int]]:
     Returns:
         dict(str): Dictionary mapping of latitude, longitude, altitude, and original address.
     """
+    geocoder = ArcGIS()
     coded_info = geocoder.geocode(address)
     return {
         "latitude": coded_info.latitude,
@@ -56,6 +56,8 @@ async def upload_csv(csv_file: UploadFile = File(...)) -> FileResponse:
     df["latitude"] = ""
     df["longitude"] = ""
     df["altitude"] = ""
+
+    geocoder = ArcGIS()
     for i, row in df.iterrows():
         coded_info = geocoder.geocode(row.address)
         print(coded_info)
