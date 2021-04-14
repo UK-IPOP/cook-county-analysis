@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "geocoder"
+version = "0.1.0"
+description = ""
+authors = ["Nick Anthony <nanthony007@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.63.0"
+geopy = "^2.1.0"
+uvicorn = "^0.13.4"
+
+[tool.poetry.dev-dependencies]
+black = "flake8"
+flake8 = "^3.9.0"
+isort = "^5.8.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
