@@ -1,13 +1,14 @@
-FROM python:3.9-alpine
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
-WORKDIR /code
+# Install Poetry
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
+    cd /usr/local/bin && \
+    ln -s /opt/poetry/bin/poetry && \
+    poetry config virtualenvs.create false
 
-# Copy in the config files:
-COPY requirements.txt ./
+# Copy using poetry.lock* in case it doesn't exist yet
+COPY ./pyproject.toml ./poetry.lock* /app/
 
-# Install poetry:
-RUN pip install -r requirements.txt
+RUN poetry install --no-root --no-dev
 
-COPY ./app /code/app
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+COPY ./app /app
