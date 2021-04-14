@@ -7,13 +7,13 @@ app = FastAPI()
 
 
 @app.get("/")
-async def index(response_class=PlainTextResponse) -> str:
+async def index() -> str:
     """Returns welcome message
 
     Returns:
         str: Welcome to this geocoding service.
     """
-    text = "Welcome to this geocoding service. Please use the /geocode route or the /docs route to query your address."
+    text = "Welcome to this geocoding service. Please use the /geocode route to query your address."
     return text
 
 
