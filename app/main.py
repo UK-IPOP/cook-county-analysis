@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.responses import PlainTextResponse
 from geopy.geocoders import ArcGIS
 import typing
 
