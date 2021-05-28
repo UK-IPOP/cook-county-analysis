@@ -24,13 +24,14 @@ async def geocode(address: str) -> typing.Dict[str, typing.Union[str, float]]:
         address (str): A full address string including street number, street name, city, state and zip
 
     Returns:
-        dict(str): Dictionary mapping of latitude, longitude, altitude, and original address.
+        dict(str): Dictionary mapping of latitude, longitude, altitude, the original address, and an accuracy score.
     """
     geocoder = ArcGIS()
     coded_info = geocoder.geocode(address)
     return {
+        "address": coded_info.address,
+        "altitude": coded_info.altitude,
         "latitude": coded_info.latitude,
         "longitude": coded_info.longitude,
-        "altitude": coded_info.altitude,
-        "address": coded_info.address,
+        "score": coded_info.raw.get("score"),
     }
