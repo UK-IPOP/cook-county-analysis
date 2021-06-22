@@ -1,0 +1,8 @@
+TODO: Migrate all notebooks to code files except one
+
+Utilize the one notebook as a 'tutorial' of the codebase and analysis
+
+TODO: update readme
+
+TODO: make scripts dir for script file to run everything?
+TODO: can we do the land-use shapefile and dissolve here in python?
