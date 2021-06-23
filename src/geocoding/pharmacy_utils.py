@@ -3,7 +3,7 @@ from geopy.geocoders import ArcGIS
 from geopy.extra.rate_limiter import RateLimiter
 
 
-def make_pharmacy_address(row) -> str:
+def make_pharmacy_address(row: pd.Series) -> str:
     street = row['PharmacyAddress']
     city = row['City']
     state = row['State']
