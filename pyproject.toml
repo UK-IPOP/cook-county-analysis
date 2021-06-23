@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "geocoder"
 version = "0.1.0"
-description = ""
+description = "Chicago Medical Examiner x Land Use Analysis"
 authors = ["Nick Anthony <nanthony007@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 geopy = "^2.1.0"
+geopandas = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 black = "flake8"
