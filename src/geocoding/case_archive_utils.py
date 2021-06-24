@@ -8,12 +8,12 @@ from geopy.geocoders import ArcGIS
 
 
 def load_case_archive_data() -> pd.DataFrame:
-    df = pd.read_csv("../data/Medical_Examiner_Case_Archive.csv")
+    df = pd.read_csv("./data/Medical_Examiner_Case_Archive.csv")
     # drop where Incident Address is None
     df = df[df["Incident Address"].notna()]
 
     # regex removal
-    df["cleaned_address"] = df.apply(lambda row: clean_address(row), axis=1)
+    df["clean_address"] = df.apply(lambda row: clean_address(row), axis=1)
     df = df[df["clean_address"].notna()]
 
     # subs city if needed and combines address fields
@@ -66,7 +66,7 @@ def city_sub(row: pd.Series) -> tuple[str, bool]:
 
 
 def create_address(row: pd.Series) -> tuple[str, bool]:
-    street = row["cleaned_address"]
+    street = row["clean_address"]
     city, city_subbed = city_sub(row)
     zip_code = (
         "" if pd.isna(row["Incident Zip Code"]) else row["Incident Zip Code"].strip()
@@ -112,4 +112,4 @@ def calculate_distance(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def dump_case_archive_data(df: pd.DataFrame):
-    df.to_csv("../data/geocoded_case_archives.csv", index=False)
+    df.to_csv("./data/geocoded_case_archives.csv", index=False)

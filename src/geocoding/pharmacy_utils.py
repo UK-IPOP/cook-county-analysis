@@ -13,7 +13,7 @@ def make_pharmacy_address(row: pd.Series) -> str:
 
 
 def load_pharmacy_data() -> pd.DataFrame:
-    df = pd.read_csv("../data/CookCounty_Pharmacies.csv")
+    df = pd.read_csv("./data/CookCounty_Pharmacies.csv")
     return df
 
 
@@ -29,4 +29,4 @@ def geocode_pharmacy(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def dump_pharmacy_data(df: pd.DataFrame):
-    df.to_csv("../data/geocoded_pharmacies.csv", index=False)
+    df.to_csv("./data/geocoded_pharmacies.csv", index=False)
