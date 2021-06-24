@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 tqdm.pandas()
 
+
 def make_pharmacy_address(row: pd.Series) -> str:
     street = row["PharmacyAddress"]
     city = row["City"]
@@ -16,6 +17,7 @@ def make_pharmacy_address(row: pd.Series) -> str:
 
 def load_pharmacy_data() -> pd.DataFrame:
     df = pd.read_csv("./data/CookCounty_Pharmacies.csv")
+    df["full_address"] = df.apply(lambda row: make_pharmacy_address(row), axis=1)
     return df
 
 
