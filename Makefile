@@ -15,5 +15,11 @@ test: # needed?
 	@poetry run echo "Running pytest..."
 	@poetry run pytest tests --color=yes
 
-cleanup:
-	@bash ./scripts/cleanup.sh
+pipeline:
+	@echo "Starting pipeline..."
+	@poetry run python scripts/land_use_runner.py
+	@poetry run python scripts/pharmacy_runner.py
+	@poetry run python scripts/case_archive_runner.py
+	@poetry run python scripts/distance_runner.py
+	@echo "Pipeline complete."
+
