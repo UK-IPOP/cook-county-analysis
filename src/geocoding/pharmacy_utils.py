@@ -1,7 +1,9 @@
 import pandas as pd
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import ArcGIS
+from tqdm import tqdm
 
+tqdm.pandas()
 
 def make_pharmacy_address(row: pd.Series) -> str:
     street = row["PharmacyAddress"]
@@ -20,7 +22,7 @@ def load_pharmacy_data() -> pd.DataFrame:
 def geocode_pharmacy(df: pd.DataFrame) -> pd.DataFrame:
     geolocator = ArcGIS()
     geocode = RateLimiter(geolocator.geocode)  # default to 0.0 delay
-    df["geo_location"] = df["full_address"].apply(geocode)
+    df["geo_location"] = df["full_address"].progress_apply(geocode)
     df["coded_lat"] = df["geo_location"].apply(lambda x: x.latitude)
     df["coded_long"] = df["geo_location"].apply(lambda x: x.longitude)
     df["coded_score"] = df["geo_location"].apply(lambda x: x.raw.get("score"))

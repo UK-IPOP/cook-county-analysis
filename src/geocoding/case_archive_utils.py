@@ -5,7 +5,9 @@ import pandas as pd
 from geopy import distance
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import ArcGIS
+from tqdm import tqdm
 
+tqdm.pandas()
 
 def load_case_archive_data() -> pd.DataFrame:
     df = pd.read_csv("./data/Medical_Examiner_Case_Archive.csv")
@@ -78,7 +80,7 @@ def create_address(row: pd.Series) -> tuple[str, bool]:
 def geocode_case_archive(df: pd.DataFrame) -> pd.DataFrame:
     geolocator = ArcGIS()
     geocode = RateLimiter(geolocator.geocode, min_delay_seconds=0)
-    df["geo_location"] = df["full_address"].apply(geocode)
+    df["geo_location"] = df["full_address"].progress_apply(geocode)
     df["coded_lat"] = df["geo_location"].apply(
         lambda x: x.latitude if pd.notna(x) else None
     )
