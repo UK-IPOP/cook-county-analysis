@@ -1,8 +1,7 @@
-TODO: Migrate all notebooks to code files except one
+TODO: Utilize the one notebook as a 'tutorial' of the codebase and analysis
 
-Utilize the one notebook as a 'tutorial' of the codebase and analysis
+TODO: update readme (important for replication!)
 
-TODO: update readme
+TODO: spatial join land use and case archives
 
-TODO: make scripts dir for script file to run everything?
-TODO: can we do the land-use shapefile and dissolve here in python?
+TODO: integrate pronob R script
