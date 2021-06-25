@@ -4,6 +4,7 @@ import pandas as pd
 
 from . import case_archive_utils as cau, pharmacy_utils as pu
 
+
 def calculate_distance(row: pd.Series, pharm_df: pd.DataFrame) -> float:
     distances = []
     for _, pharm in pharm_df.iterrows():
@@ -11,14 +12,15 @@ def calculate_distance(row: pd.Series, pharm_df: pd.DataFrame) -> float:
             (row.coded_lat, row.coded_long),  # case archive (point1)
             (pharm.coded_lat, pharm.coded_long),  # pharmacy (point2)
         )
-        # miles 
+        # miles
         distances.append(d.mi)
     return min(distances)
 
+
 def apply_distance():
-    pharmacies = pu.load_pharmacy_data()
-    case_archives = cau.load_case_archive_data()
-    case_archives['distance'] = case_archives.apply(
+    case_archives = pd.read_csv("./data/geocoded_case_archives.csv")
+    pharmacies = pd.read_csv("./data/geocoded_pharmacies.csv")
+    case_archives["distance"] = case_archives.apply(
         lambda row: calculate_distance(row, pharm_df=pharmacies), axis=1
     )
-    case_archives.to_csv('./data/case_archives_distances.csv', index=False)
+    case_archives.to_csv("./data/case_archives_distances.csv", index=False)
