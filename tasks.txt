@@ -2,6 +2,4 @@ TODO: Utilize the one notebook as a 'tutorial' of the codebase and analysis
 
 TODO: update readme (important for replication!)
 
-TODO: spatial join land use and case archives
-
-TODO: integrate pronob R script
+TODO: integrate Pronob's R script
