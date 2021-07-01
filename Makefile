@@ -21,5 +21,6 @@ pipeline:
 	@poetry run python scripts/pharmacy_runner.py
 	@poetry run python scripts/case_archive_runner.py
 	@poetry run python scripts/distance_runner.py
+	@poetry run python scripts/spatial_join_runner.py
 	@echo "Pipeline complete."
 
