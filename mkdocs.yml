@@ -1,0 +1,19 @@
+site_name: Scholar Network
+site_url: https://uk-ipop.github.io/geocoding/
+
+theme:
+  name: 'material'
+
+plugins:
+  - search
+  - mkdocstrings:
+      watch:
+        - src/geocoding
+
+nav:
+  - Home: index.md
+  - API Reference:
+      - Case Archive Utils: api-reference/case-archive-utils.md
+      - Pharmacy Utils: api-reference/pharmacy-utils.md
+      - Distance Utils: api-reference/distance-utils.md
+      - Spatial Join: api-reference/spatial-join.md

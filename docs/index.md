@@ -2,22 +2,9 @@
 
 <img alt="Python" src="https://img.shields.io/badge/python-blue.svg?style=for-the-badge&logo=python&logoColor=yellow"/>
 
-- [Geocoding Analysis](#geocoding-analysis)
-  - [API Reference](#api-reference)
-  - [Description](#description)
-  - [Installation](#installation)
-  - [Post-Installation Setup](#post-installation-setup)
-  - [Methodology](#methodology)
-  - [Pipeline Explanation](#pipeline-explanation)
-    - [Pipeline Flowchart](#pipeline-flowchart)
-  - [Pipeline Usage](#pipeline-usage)
-  - [Support](#support)
-  - [License](#license)
-  - [Citation](#citation)
+## Homepage
 
-## API Reference
-
-An API Reference for each module is available [here](https://uk-ipop.github.io/geocoding/)
+The GitHub homepage can be found [here](https://github.com/UK-IPOP/geocoding)
 
 ## Description
 
@@ -49,13 +36,13 @@ You then need to go to the Chicago ME Records [website](https://datacatalog.cook
 
 ## Methodology
 
-In order to perform this analysis, we conducted all of the above steps regarding project setup. We extracted all of the ME Records on [**DATE**]. We then ran the pipeline and used the resulting data-file for analysis in **[PAPER]**. To see an example of potential analysis that could result from this, see our [Tutorial Notebook](notebooks/Analysis_Tutorial.ipynb).
+In order to perform this analysis, we conducted all of the above steps regarding project setup. We extracted all of the ME Records on [**DATE**]. We then ran the pipeline and used the resulting data-file for analysis in **[PAPER]**. To see an example of potential analysis that could result from this, see our [Tutorial Notebook](https://github.com/UK-IPOP/geocoding/blob/main/notebooks/Analysis_Tutorial.ipynb).
 
 ## Pipeline Explanation
 
 The pipeline has multiple stages that need to run in succession.
 
-1. Take the raw Land Use files and apply the Data Dictionary (extracted from [this PDF](resources/Chicago_LandUseClassifications_2015.pdf)) to each Land Use polygon.
+1. Take the raw Land Use files and apply the Data Dictionary (extracted from [this PDF](https://github.com/UK-IPOP/geocoding/blob/main/resources/Chicago_LandUseClassifications_2015.pdf)) to each Land Use polygon.
 2. Geocode the pharmacies provided by Cook County.
 3. Geocode Case Archive records.
 4. Calculate the distance to the closest pharmacy from each Case Archive record.
@@ -65,7 +52,7 @@ The following image may more clearly explain the data flow:
 
 ### Pipeline Flowchart
 
-![Pipeline Flowchart Image](resources/Geocoding%20Flowchart.png)
+![Pipeline Flowchart Image](https://github.com/UK-IPOP/geocoding/blob/main/resources/Geocoding%20Flowchart.png)
 
 ## Pipeline Usage
 
