@@ -1,6 +1,6 @@
 # Geocoding Analysis
 
-!! BADGES !!
+<img alt="Python" src="https://img.shields.io/badge/python-blue.svg?style=for-the-badge&logo=python&logoColor=yellow"/>
 
 ## Description
 
@@ -45,6 +45,10 @@ The pipeline has multiple stages that need to run in succession.
 5. Spatially join the Land Use shapes to the Case Archive records giving each record a corresponding Land Use category.
 
 The following image may more clearly explain the data flow:
+
+### Pipeline Flowchart
+
+![Pipeline Flowchart Image](resources/Geocoding%20Flowchart.png)
 
 ## Pipeline Usage
 
