@@ -3,3 +3,8 @@ TODO: Utilize the one notebook as a 'tutorial' of the codebase and analysis
 TODO: update readme (important for replication!)
 
 TODO: integrate Pronob's R script
+    - update readme according to new makefile flow
+
+TODO: Add tests
+
+TODO: build & deploy mkdocs docs
