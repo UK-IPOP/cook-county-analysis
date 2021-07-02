@@ -7,6 +7,15 @@ tqdm.pandas()
 
 
 def make_pharmacy_address(row: pd.Series) -> str:
+    """Utility function to combine fields into one address field.
+
+    The row for this function should have PharmacyAddress, City, State, and Zip fields.
+    Args:
+        row (pd.Series): Row in a dataframe
+
+    Returns:
+        str: Concatenated string for full address
+    """
     street = row["PharmacyAddress"]
     city = row["City"]
     state = row["State"]
@@ -16,12 +25,29 @@ def make_pharmacy_address(row: pd.Series) -> str:
 
 
 def load_pharmacy_data() -> pd.DataFrame:
+    """Loads pharmacy datafile.
+    
+    Also makes 'full_address' column.
+
+    Returns:
+        pd.DataFrame: Loaded dataframe.
+    """
     df = pd.read_csv("./data/CookCounty_Pharmacies.csv")
     df["full_address"] = df.apply(lambda row: make_pharmacy_address(row), axis=1)
     return df
 
 
 def geocode_pharmacy(df: pd.DataFrame) -> pd.DataFrame:
+    """Geocodes the pharmacies.
+
+    Gets latitude, longitude, and accuracy score for each pharmacy.
+
+    Args:
+        df (pd.DataFrame): Pharmacy dataframe
+
+    Returns:
+        pd.DataFrame: Geocoded pharmacy dataframe.
+    """
     geolocator = ArcGIS()
     geocode = RateLimiter(geolocator.geocode)  # default to 0.0 delay
     df["geo_location"] = df["full_address"].progress_apply(geocode)
@@ -33,4 +59,5 @@ def geocode_pharmacy(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def dump_pharmacy_data(df: pd.DataFrame):
+    """Utility function to dump geocoded dataframe to file."""
     df.to_csv("./data/geocoded_pharmacies.csv", index=False)

@@ -10,6 +10,11 @@ from tqdm import tqdm
 tqdm.pandas()
 
 def load_case_archive_data() -> pd.DataFrame:
+    """Utility function to load in ME dataset from file.
+    
+    This function also removes records where the Incident Address is null
+    and applies the clean address method.
+    """
     df = pd.read_csv("./data/Medical_Examiner_Case_Archive.csv")
     # drop where Incident Address is None
     df = df[df["Incident Address"].notna()]
@@ -26,6 +31,14 @@ def load_case_archive_data() -> pd.DataFrame:
 
 
 def deal_with_commas(x: str) -> str:
+    """Handles commas and stripping and title-casing in Address field.
+
+    Args:
+        x (str): Address
+
+    Returns:
+        str: Cleaned address
+    """
     if "," not in x:
         return x.strip().title()
 
@@ -37,6 +50,14 @@ def deal_with_commas(x: str) -> str:
 
 
 def remove_apartment_info(x: str) -> str:
+    """Uses regex to remove # and Apt from Address
+
+    Args:
+        x (str): Address
+
+    Returns:
+        str: Cleaned address
+    """
     # regex 1 to look for apartments and #s
     result1 = re.sub(r"apt.*|\#.*|.*nh,", "", x)
     # regex 2 to specify only alphanumeric + '.' for abbreviations and spaces
@@ -45,6 +66,14 @@ def remove_apartment_info(x: str) -> str:
 
 
 def clean_address(row: pd.Series) -> Union[int, str, None]:
+    """Cleans an address by calling other utility functions.
+
+    Args:
+        row (pd.Series): row in a dataframe
+
+    Returns:
+        Union[int, str, None]: cleaned address or None
+    """
     a = row["Incident Address"]
     # handles 'unknown' and variations
     if "unk" in a.lower():
@@ -55,6 +84,18 @@ def clean_address(row: pd.Series) -> Union[int, str, None]:
 
 
 def city_sub(row: pd.Series) -> tuple[str, bool]:
+    """Idenifies whether a city subsitution can be used.
+
+    This function handles cases where the Incident City is null
+    and it looks for a city in Residence City.  If there is one,
+    it subsitutes the latter for the former.
+
+    Args:
+        row (pd.Series): row in a dataframe
+
+    Returns:
+        tuple[str, bool]: a tuple containing the city and whether it was subsituted
+    """
     if pd.notna(row["Incident City"]):
         city = row["Incident City"].title().strip()
         subbed = False
@@ -68,6 +109,16 @@ def city_sub(row: pd.Series) -> tuple[str, bool]:
 
 
 def create_address(row: pd.Series) -> tuple[str, bool]:
+    """Creates the address field column for each row of a dataframe.
+
+    Calls city_sub.
+
+    Args:
+        row (pd.Series): row in a dataframe.
+
+    Returns:
+        tuple[str, bool]: cleaned address and whether a city substitution was performed.
+    """
     street = row["clean_address"]
     city, city_subbed = city_sub(row)
     zip_code = (
@@ -78,6 +129,19 @@ def create_address(row: pd.Series) -> tuple[str, bool]:
 
 
 def geocode_case_archive(df: pd.DataFrame) -> pd.DataFrame:
+    """Geocodes each row in the case archives dataframe.
+
+    This function takes the full address column and geocodes it.
+
+    The resulting dataframe has three new columns: coded_lat, coded_long,
+    and coded_score.
+
+    Args:
+        df (pd.DataFrame): case archives dataframe.
+
+    Returns:
+        pd.DataFrame: geocoded dataframe.
+    """
     geolocator = ArcGIS()
     geocode = RateLimiter(geolocator.geocode, min_delay_seconds=0)
     df["geo_location"] = df["full_address"].progress_apply(geocode)
@@ -95,6 +159,14 @@ def geocode_case_archive(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_distance(df: pd.DataFrame) -> pd.DataFrame:
+    """Calculates distance from original lat/long to geocoded lat/long.
+
+    Args:
+        df (pd.DataFrame): original df
+
+    Returns:
+        pd.DataFrame: dataframe with distance column
+    """
     def calc_distance(row) -> Union[None, float]:
         if (
             pd.isna(row.latitude)
@@ -114,4 +186,5 @@ def calculate_distance(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def dump_case_archive_data(df: pd.DataFrame):
+    """Dumps the provided dataframe to file."""
     df.to_csv("./data/geocoded_case_archives.csv", index=False)
