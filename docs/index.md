@@ -52,7 +52,7 @@ The following image may more clearly explain the data flow:
 
 ### Pipeline Flowchart
 
-![Pipeline Flowchart Image](https://github.com/UK-IPOP/geocoding/blob/main/resources/Geocoding%20Flowchart.png)
+![Pipeline Flowchart Image](https://raw.githubusercontent.com/UK-IPOP/geocoding/main/resources/Geocoding%20Flowchart.png)
 
 ## Pipeline Usage
 
