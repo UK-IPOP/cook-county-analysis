@@ -12,3 +12,4 @@ if __name__ == "__main__":
     geo_df = land_use_shapes.merge(data_dict, on="LANDUSE")
     print("Writing new shapefile...")
     geo_df.to_file("./data/LANDUSE_SHAPES/land_use.shp")
+    print('Done.')

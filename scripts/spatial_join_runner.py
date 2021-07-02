@@ -9,3 +9,4 @@ if __name__ == "__main__":
     merged_data = spatial_join.spatially_join(geo_points, geo_dict["land_use"])
     print('Dumping file...')
     spatial_join.write_joined_file(merged_data)
+    print('Done.')

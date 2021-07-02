@@ -9,3 +9,4 @@ if __name__ == "__main__":
     distance_df = cau.calculate_distance(geocoded_df)
     print("Dumping data...")
     cau.dump_case_archive_data(distance_df)
+    print('Done.')
