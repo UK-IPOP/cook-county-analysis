@@ -1,0 +1,1 @@
+rm -v !("./data/CookCounty_Pharmacies.csv"|"./data/Medical_Examiner_Case_archive.csv"|"./data/data_dictioanry.csv"|"./data/joined-records.csv")
