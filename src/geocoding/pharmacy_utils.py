@@ -1,7 +1,8 @@
 import pandas as pd
-from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import ArcGIS
+from geopy.adapters import AioHTTPAdapter
 from tqdm import tqdm
+import asyncio
 
 tqdm.pandas()
 
@@ -49,8 +50,7 @@ def geocode_pharmacy(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Geocoded pharmacy dataframe.
     """
     geolocator = ArcGIS()
-    geocode = RateLimiter(geolocator.geocode)  # default to 0.0 delay
-    df["geo_location"] = df["full_address"].progress_apply(geocode)
+    df["geo_location"] = df["full_address"].progress_apply(geolocator.geocode)
     df["coded_lat"] = df["geo_location"].apply(lambda x: x.latitude)
     df["coded_long"] = df["geo_location"].apply(lambda x: x.longitude)
     df["coded_score"] = df["geo_location"].apply(lambda x: x.raw.get("score"))
