@@ -8,8 +8,7 @@ format:
 
 lint:
 	@echo "Running flake8 linter..."
-	@poetry run flake8 src/geocoding --max-line-length=89
-	@poetry run flake8 scripts --max-line-length=89
+	@poetry run flake8 src/geocoding scripts --max-line-length=89
 
 test: # needed?
 	@echo "Running pytest..."

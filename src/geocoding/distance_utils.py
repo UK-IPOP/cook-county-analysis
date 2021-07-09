@@ -1,4 +1,3 @@
-from operator import index
 from typing import Union
 
 import pandas as pd

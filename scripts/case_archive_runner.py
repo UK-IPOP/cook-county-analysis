@@ -1,5 +1,3 @@
-from pickle import TRUE
-
 from geocoding import case_archive_utils as cau
 
 # set this to `False` this if you have a specific file
