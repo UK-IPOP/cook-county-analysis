@@ -23,10 +23,13 @@ docs-deploy:
 
 pipeline:
 	@echo "Starting pipeline..."
+	@bash scripts/download_landuse_shapefiles.sh
 	@poetry run python scripts/land_use_runner.py
 	@poetry run python scripts/pharmacy_runner.py
 	@poetry run python scripts/case_archive_runner.py
 	@poetry run python scripts/distance_runner.py
 	@poetry run python scripts/spatial_join_runner.py
+	@poetry run python scripts/merge_runner.py
+	@bash scripts/cleanup.sh
 	@echo "Pipeline complete."
 
