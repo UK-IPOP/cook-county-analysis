@@ -200,6 +200,6 @@ def get_live_case_archive_data() -> pd.DataFrame:
         pd.DataFrame: Dataframe of records.
     """
     client = Socrata("datacatalog.cookcountyil.gov", None)
-    results = client.get("cjeq-bs86", limit=None)
+    results = client.get("cjeq-bs86", limit=100_000)
     results_df = pd.DataFrame.from_records(results)
     return results_df
