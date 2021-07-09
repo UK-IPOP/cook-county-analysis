@@ -5,13 +5,15 @@ import pandas as pd
 from geopy import distance
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import ArcGIS
+from sodapy import Socrata
 from tqdm import tqdm
 
 tqdm.pandas()
 
+
 def load_case_archive_data() -> pd.DataFrame:
     """Utility function to load in ME dataset from file.
-    
+
     This function also removes records where the Incident Address is null
     and applies the clean address method.
     """
@@ -167,6 +169,7 @@ def calculate_distance(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: dataframe with distance column
     """
+
     def calc_distance(row) -> Union[None, float]:
         if (
             pd.isna(row.latitude)
@@ -188,3 +191,15 @@ def calculate_distance(df: pd.DataFrame) -> pd.DataFrame:
 def dump_case_archive_data(df: pd.DataFrame):
     """Dumps the provided dataframe to file."""
     df.to_csv("./data/geocoded_case_archives.csv", index=False)
+
+
+def get_live_case_archive_data() -> pd.DataFrame:
+    """Loads live data from cook county api via socrata (sodapy).
+
+    Returns:
+        pd.DataFrame: Dataframe of records.
+    """
+    client = Socrata("datacatalog.cookcountyil.gov", None)
+    results = client.get("cjeq-bs86", limit=None)
+    results_df = pd.DataFrame.from_records(results)
+    return results_df

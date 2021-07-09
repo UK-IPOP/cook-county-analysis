@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "geocoding"
-version = "0.1.3"
+version = "0.1.4"
 description = "Chicago Medical Examiner x Land Use Analysis"
 authors = ["Nick Anthony <nanthony007@gmail.com>"]
 readme = 'README.md'
@@ -16,6 +16,7 @@ geopy = "^2.1.0"
 geopandas = "^0.9.0"
 tqdm = "^4.61.1"
 Rtree = "^0.9.7"
+sodapy = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 black = "flake8"
