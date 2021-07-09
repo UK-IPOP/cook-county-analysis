@@ -145,8 +145,7 @@ def geocode_case_archive(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: geocoded dataframe.
     """
     geolocator = ArcGIS()
-    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=0)
-    df["geo_location"] = df["full_address"].progress_apply(geocode)
+    df["geo_location"] = df["full_address"].progress_apply(geolocator.geocode)
     df["coded_lat"] = df["geo_location"].apply(
         lambda x: x.latitude if pd.notna(x) else None
     )
