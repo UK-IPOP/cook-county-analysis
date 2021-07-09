@@ -1,6 +1,7 @@
 import typing
-import pandas as pd
+
 import geopandas as gpd
+import pandas as pd
 
 
 def load_files() -> dict[str, typing.Union[pd.DataFrame, gpd.GeoDataFrame]]:

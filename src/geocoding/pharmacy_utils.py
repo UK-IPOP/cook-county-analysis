@@ -26,7 +26,7 @@ def make_pharmacy_address(row: pd.Series) -> str:
 
 def load_pharmacy_data() -> pd.DataFrame:
     """Loads pharmacy datafile.
-    
+
     Also makes 'full_address' column.
 
     Returns:

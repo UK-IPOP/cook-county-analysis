@@ -1,7 +1,8 @@
 from operator import index
 from typing import Union
-from geopy import distance
+
 import pandas as pd
+from geopy import distance
 from tqdm import tqdm
 
 tqdm.pandas()
