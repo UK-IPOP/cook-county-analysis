@@ -31,7 +31,7 @@ def load_case_archive_data() -> pd.DataFrame:
 
 
 def deal_with_commas(x: str) -> str:
-    """Handles commas and stripping and title-casing in Address field.
+    """Handles commas, stripping and title-casing in Address field.
 
     Args:
         x (str): Address
@@ -84,7 +84,7 @@ def clean_address(row: pd.Series) -> Union[int, str, None]:
 
 
 def city_sub(row: pd.Series) -> tuple[str, bool]:
-    """Idenifies whether a city subsitution can be used.
+    """Identifies whether a city substitution can be used.
 
     This function handles cases where the Incident City is null
     and it looks for a city in Residence City.  If there is one,
