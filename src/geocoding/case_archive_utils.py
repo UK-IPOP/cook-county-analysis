@@ -10,16 +10,38 @@ from tqdm import tqdm
 
 tqdm.pandas()
 
+def get_live_case_archive_data() -> pd.DataFrame:
+    """Loads live data from cook county api via socrata (sodapy).
+
+    Returns:
+        pd.DataFrame: Dataframe of records.
+    """
+    client = Socrata("datacatalog.cookcountyil.gov", None)
+    results = client.get("cjeq-bs86", limit=100_000)  # id for case archives dataset
+    results_df = pd.DataFrame.from_records(results)
+
+    # drop where incident_street is None
+    df = results_df[results_df["incident_street"].notna()]
+
+    # regex removal
+    df["clean_address"] = df.apply(lambda row: clean_address(row), axis=1)
+    df = df[df["clean_address"].notna()]
+
+    # subs city if needed and combines address fields
+    addresses = df.apply(lambda row: create_address(row), axis=1)
+    df["full_address"] = [a[0] for a in addresses]
+    df["city_subbed"] = [a[1] for a in addresses]
+    return results_df
 
 def load_case_archive_data() -> pd.DataFrame:
     """Utility function to load in ME dataset from file.
 
-    This function also removes records where the Incident Address is null
+    This function also removes records where the incident_street is null
     and applies the clean address method.
     """
     df = pd.read_csv("./data/Medical_Examiner_Case_Archive.csv")
-    # drop where Incident Address is None
-    df = df[df["Incident Address"].notna()]
+    # drop where incident_street is None
+    df = df[df["incident_street"].notna()]
 
     # regex removal
     df["clean_address"] = df.apply(lambda row: clean_address(row), axis=1)
@@ -76,7 +98,7 @@ def clean_address(row: pd.Series) -> Union[int, str, None]:
     Returns:
         Union[int, str, None]: cleaned address or None
     """
-    a = row["Incident Address"]
+    a = row["incident_street"]
     # handles 'unknown' and variations
     if "unk" in a.lower():
         return None
@@ -88,8 +110,8 @@ def clean_address(row: pd.Series) -> Union[int, str, None]:
 def city_sub(row: pd.Series) -> tuple[str, bool]:
     """Identifies whether a city substitution can be used.
 
-    This function handles cases where the Incident City is null
-    and it looks for a city in Residence City.  If there is one,
+    This function handles cases where the incident_city is null
+    and it looks for a city in residence_city.  If there is one,
     it subsitutes the latter for the former.
 
     Args:
@@ -98,11 +120,11 @@ def city_sub(row: pd.Series) -> tuple[str, bool]:
     Returns:
         tuple[str, bool]: a tuple containing the city and whether it was subsituted
     """
-    if pd.notna(row["Incident City"]):
-        city = row["Incident City"].title().strip()
+    if pd.notna(row["incident_city"]):
+        city = row["incident_city"].title().strip()
         subbed = False
-    elif pd.isna(row["Incident City"]) and pd.notna(row["Residence City"]):
-        city = row["Residence City"].title().strip()
+    elif pd.isna(row["incident_city"]) and pd.notna(row["residence_city"]):
+        city = row["residence_city"].title().strip()
         subbed = True
     else:
         city = ""
@@ -124,7 +146,7 @@ def create_address(row: pd.Series) -> tuple[str, bool]:
     street = row["clean_address"]
     city, city_subbed = city_sub(row)
     zip_code = (
-        "" if pd.isna(row["Incident Zip Code"]) else row["Incident Zip Code"].strip()
+        "" if pd.isna(row["incident_zip"]) else row["incident_zip"].strip()
     )
     address = f"{street} {city} {zip_code}"
     return address.strip(), city_subbed
@@ -190,15 +212,3 @@ def calculate_distance(df: pd.DataFrame) -> pd.DataFrame:
 def dump_case_archive_data(df: pd.DataFrame):
     """Dumps the provided dataframe to file."""
     df.to_csv("./data/geocoded_case_archives.csv", index=False)
-
-
-def get_live_case_archive_data() -> pd.DataFrame:
-    """Loads live data from cook county api via socrata (sodapy).
-
-    Returns:
-        pd.DataFrame: Dataframe of records.
-    """
-    client = Socrata("datacatalog.cookcountyil.gov", None)
-    results = client.get("cjeq-bs86", limit=100_000)  # id for case archives dataset
-    results_df = pd.DataFrame.from_records(results)
-    return results_df
