@@ -1,5 +1,6 @@
 import geopandas as gpd
 import pandas as pd
+import os
 
 if __name__ == "__main__":
     print("Reading datasets...")
@@ -11,5 +12,6 @@ if __name__ == "__main__":
     data_dict["LANDUSE"] = data_dict.landuse_id.apply(lambda x: str(x))
     geo_df = land_use_shapes.merge(data_dict, on="LANDUSE")
     print("Writing new shapefile...")
+    os.mkdir("./data/LANDUSE_SHAPES")
     geo_df.to_file("./data/LANDUSE_SHAPES/land_use.shp")
     print("Done.")
