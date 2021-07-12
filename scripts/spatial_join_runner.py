@@ -1,6 +1,7 @@
 from geocoding import spatial_join
 
 if __name__ == "__main__":
+    print("Starting spatial join runner...")
     print("Loading files...")
     geo_dict = spatial_join.load_files()
     print("Making geo-points...")

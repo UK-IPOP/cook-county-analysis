@@ -1,6 +1,7 @@
 from geocoding import pharmacy_utils as pu
 
 if __name__ == "__main__":
+    print("Starting pharmacy runner...")
     print("Loading data...")
     df = pu.load_pharmacy_data()
     print("Geocoding pharmacy addresses...")

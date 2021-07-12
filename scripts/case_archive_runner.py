@@ -6,6 +6,7 @@ from geocoding import case_archive_utils as cau
 # LIVE = True
 
 if __name__ == "__main__":
+    print("Starting case archive runner...")
     print("Loading data...")
     df = cau.get_live_case_archive_data()
     print("Geocoding case archive data...")

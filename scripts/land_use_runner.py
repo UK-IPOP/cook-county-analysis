@@ -3,6 +3,7 @@ import pandas as pd
 import os
 
 if __name__ == "__main__":
+    print("Starting land use runner...")
     print("Reading datasets...")
     land_use_shapes = gpd.read_file(
         "./resources/LUI15_shapefile_v1/Landuse2015_CMAP_v1.shp"

@@ -1,6 +1,7 @@
 import pandas as pd
 
 if __name__ == "__main__":
+    print("Starting merge runner...")
     print("Loading files...")
     df1 = pd.read_csv("./data/joined_records.csv", low_memory=False)
     df2 = pd.read_csv("./data/drug_classifications.csv", low_memory=False)
