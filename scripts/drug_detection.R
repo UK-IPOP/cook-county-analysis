@@ -11,7 +11,7 @@ pacman::p_load(readr, lubridate, tidyverse, dplyr, stringr)
 
 
 # cleaning for 2nd primary cause linea 
-county<-read.csv("./data/geocoded_case_archives.csv")
+county<- read.csv("~/Downloads/geocoded_case_archives.csv")
 print(head(county))
 y<-county$Primary.Cause.Line.A
 z<-str_split_fixed(y,"AND|;|,",n=13)
@@ -1242,11 +1242,11 @@ fentanyl_All<-fun_count(fentanyl_all)
 primary_cause<-county$Primary.Cause.Line.A
 primary_id<-county$Case.Number
 Death_Date<-county$Date.of.Death
-drug<-data.frame(primary_id,primary_cause,Death_Date,drug,fentanyl_All)
+drug2<-data.frame(primary_id,primary_cause,Death_Date,drug,fentanyl_All)
 
-drug$Death_Date<-strptime(drug$Death_Date, format="%y%y-%m-%d")
+drug2$Death_Date<-strptime(drug2$Death_Date, format="%m/%d/%Y")
 
-drug <-filter(drug, Death_Date>= as.Date('2014-08-01 EDT') & Death_Date<= as.Date('2018-08-15 EDT'))
+drug2 <-filter(drug2, Death_Date>= as.Date('2014-08-01') & Death_Date<= as.Date('2018-08-15 EDT'))
 
 fun_count1<-function(x){
   result<-c()
@@ -1256,39 +1256,26 @@ fun_count1<-function(x){
   result
 }
 
-fentanyl<-data.frame(drug$fentanyl_All,drug$CARFENTANIL,
-                    drug$ANPP_4,drug$U_47700)
+fentanyl<-data.frame(drug2$fentanyl_All,drug2$CARFENTANIL,drug2$ANPP_4,drug2$U_47700)
 
 count1<-fun_count1(fentanyl)
 
-nonfentanyl1<-data.frame(drug$COCAINE,drug$MDMA,drug$MDA,drug$METHAMPHETAMINE,
-                        drug$AMPHETAMINE,drug$LSD,drug$FPM_3,drug$AMINOCLONAZEPAM_7,
-                        drug$CLONAZEPAM,drug$DELORAZEPAM,drug$DIAZEPAM,
-                        drug$DICLAZEPAM,drug$ETIZOLAM,drug$LORAZEPAM,
-                        drug$MIDAZOLAM,drug$NORDIAZEPAM,drug$TEMAZEPAM)
+nonfentanyl1<-data.frame(drug2$COCAINE,drug2$MDMA,drug2$MDA,drug2$METHAMPHETAMINE,
+                        drug2$AMPHETAMINE,drug2$LSD,drug2$FPM_3,drug2$AMINOCLONAZEPAM_7,
+                        drug2$CLONAZEPAM,drug2$DELORAZEPAM,drug2$DIAZEPAM,
+                        drug2$DICLAZEPAM,drug2$ETIZOLAM,drug2$LORAZEPAM,
+                        drug2$MIDAZOLAM,drug2$NORDIAZEPAM,drug2$TEMAZEPAM)
 
-nonfentanyl2<-data.frame(drug$HEROIN,drug$CODEINE,drug$METHADONE,
-                        drug$MORPHINE,drug$HYDROCODONE,drug$TRAMADOL,
-                        drug$OXYCODONE,drug$OXYMORPHONE,drug$BUPRENORPHINE,
-                        drug$MITRAGYNINE,drug$OPIOID,drug$OPIATE)
+nonfentanyl2<-data.frame(drug2$HEROIN,drug2$CODEINE,drug2$METHADONE,
+                        drug2$MORPHINE,drug2$HYDROCODONE,drug2$TRAMADOL,
+                        drug2$OXYCODONE,drug2$OXYMORPHONE,drug2$BUPRENORPHINE,
+                        drug2$MITRAGYNINE,drug2$OPIOID,drug2$OPIATE)
 
 nonfentanyl<-data.frame(nonfentanyl1,nonfentanyl2)
 
 count3<-fun_count1(nonfentanyl)
 
-print("count1")
-print(count1)
-print("count3")
-print(count3)
-print("primary_id")
-print(primary_id)
-print("primary_cause")
-print(primary_cause)
-print("fentanyl")
-print(fentanyl)
-print("nonfentanyl")
-print(nonfentanyl)
-fent<-data.frame(count1,count3,primary_id,primary_cause,
+fent<-data.frame(count1,count3,drug2$primary_id,drug2$primary_cause,
                 fentanyl,nonfentanyl)
 
 index<-which(fent$count1==1&fent$count3==1)
