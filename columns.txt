@@ -1,7 +1,0 @@
-['casenumber', 'incident_date', 'death_date', 'age', 'gender', 'race',
-       'latino', 'cold_related', 'heat_related', 'commissioner_district',
-       'incident_street', 'incident_city', 'incident_zip', 'longitude',
-       'latitude', 'location', 'residence_city', 'residence_zip', 'objectid',
-       ':@computed_region_tu5p_2ban', ':@computed_region_nqe2_pztc',
-       ':@computed_region_h3ai_7k6i', 'manner', 'primarycause', 'gunrelated',
-       'opioids', 'secondarycause', 'primarycause_linea'],
