@@ -32,4 +32,3 @@ pipeline:
 	@poetry run python scripts/merge_runner.py
 	@bash scripts/cleanup.sh
 	@echo "Pipeline complete."
-

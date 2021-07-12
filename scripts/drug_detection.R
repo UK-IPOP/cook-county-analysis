@@ -12,7 +12,8 @@ pacman::p_load(readr, lubridate, tidyverse, dplyr, stringr)
 
 # cleaning for 2nd primary cause linea 
 county<- read.csv("./data/geocoded_case_archives.csv")
-y<-county$Primary.Cause.Line.A
+print(head(county))
+y<-county$primarycause_linea
 z<-str_split_fixed(y,"AND|;|,",n=13)
 colnames(z)<-c("z1","z2","z3","z4","z5","z6","z7","z8","z9","z10","z11","z12","z13")
 z<-as.data.frame(z)
@@ -1238,14 +1239,10 @@ fun_count<-function(x){
 fentanyl_All<-fun_count(fentanyl_all)
 
 #primary cause 
-primary_cause<-county$Primary.Cause.Line.A
-primary_id<-county$Case.Number
-Death_Date<-county$Date.of.Death
+primary_cause<-county$primarycause_linea
+primary_id<-county$casenumber
+Death_Date<-county$death_date
 drug2<-data.frame(primary_id,primary_cause,Death_Date,drug,fentanyl_All)
-
-drug2$Death_Date<-strptime(drug2$Death_Date, format="%m/%d/%Y")
-
-drug2 <-filter(drug2, Death_Date>= as.Date('2014-08-01') & Death_Date<= as.Date('2018-08-15 EDT'))
 
 fun_count1<-function(x){
   result<-c()
