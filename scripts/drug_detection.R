@@ -1,22 +1,19 @@
 ######################
-install.packages('readr', repos='https://cloud.r-project.org/')
-install.packages('lubridate', repos='https://cloud.r-project.org/')
-install.packages('tidyverse', repos='https://cloud.r-project.org/')
-install.packages('dplyr', repos='https://cloud.r-project.org/')
-install.packages('stringr', repos='https://cloud.r-project.org/')
+install.packages("pacman", repos='http://cran.us.r-project.org')
 
-library(readr)
-library(lubridate)
-library(tidyverse)
-library(dplyr)
-library(tidyverse)
-library(stringr)
+pacman::p_load(readr, lubridate, tidyverse, dplyr, stringr)
+
+# library(readr)
+# library(lubridate)
+# library(tidyverse)
+# library(dplyr)
+# library(stringr)
 
 
 # cleaning for 2nd primary cause linea 
 county<-read.csv("./data/geocoded_case_archives.csv")
-
-y<-county$Primarycause.Linea
+print(head(county))
+y<-county$Primary.Cause.Line.A
 z<-str_split_fixed(y,"AND|;|,",n=13)
 colnames(z)<-c("z1","z2","z3","z4","z5","z6","z7","z8","z9","z10","z11","z12","z13")
 z<-as.data.frame(z)
@@ -1081,7 +1078,7 @@ z$z13[grep("TEMAZEPAM",z$z13)]<-"TEMAZEPAM"
 #detecting each drug presence on the primary cause when opioid=true
 fun.detect<-function(x, text="COCAINE") {
   result<-c()
-  for(i in 1:52710){
+  for(i in 1:nrow(x)){
     result[i]<-ifelse(any(str_detect(x[i,], pattern=text) %in% TRUE), 1, 0)
   }
   result
@@ -1232,7 +1229,7 @@ fentanyl_all<-cbind(MAF,ACETYL,FIBF,BUTYRYL,ANPP_4,CYCLOPROPYL,CARFENTANIL,
 
 fun_count<-function(x){
   result<-c()
-  for(i in 1:52710){
+  for(i in 1:nrow(x)){
     result[i]<-ifelse(any(x[i,]>0) %in% TRUE,1,0)
   }
   result
@@ -1242,9 +1239,9 @@ fun_count<-function(x){
 fentanyl_All<-fun_count(fentanyl_all)
 
 #primary cause 
-primary_cause<-county$Primarycause.Linea
-primary_id<-county$Casenumber
-Death_Date<-county$Death.Date
+primary_cause<-county$Primary.Cause.Line.A
+primary_id<-county$Case.Number
+Death_Date<-county$Date.of.Death
 drug<-data.frame(primary_id,primary_cause,Death_Date,drug,fentanyl_All)
 
 drug$Death_Date<-strptime(drug$Death_Date, format="%y%y-%m-%d")
@@ -1253,7 +1250,7 @@ drug <-filter(drug, Death_Date>= as.Date('2014-08-01 EDT') & Death_Date<= as.Dat
 
 fun_count1<-function(x){
   result<-c()
-  for(i in 1:24078){
+  for(i in 1:nrow(x)){
     result[i]<-ifelse(any(x[i,]>0) %in% TRUE,1,0)
   }
   result
@@ -1279,7 +1276,19 @@ nonfentanyl<-data.frame(nonfentanyl1,nonfentanyl2)
 
 count3<-fun_count1(nonfentanyl)
 
-fent<-data.frame(count1,count3,drug$primary_id,drug$primary_cause,
+print("count1")
+print(count1)
+print("count3")
+print(count3)
+print("primary_id")
+print(primary_id)
+print("primary_cause")
+print(primary_cause)
+print("fentanyl")
+print(fentanyl)
+print("nonfentanyl")
+print(nonfentanyl)
+fent<-data.frame(count1,count3,primary_id,primary_cause,
                 fentanyl,nonfentanyl)
 
 index<-which(fent$count1==1&fent$count3==1)
@@ -1296,4 +1305,4 @@ colnames(fent)<-c("Fentanyl-Involved Fatal Overdoses",
                   "OPIOID", "OPIATE")
 
 
-write_csv(fent,file="fentanyl2.csv")
+write_csv(fent,file="drug_classifications.csv")
