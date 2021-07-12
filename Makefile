@@ -28,6 +28,7 @@ pipeline:
 	@poetry run python scripts/case_archive_runner.py
 	@poetry run python scripts/distance_runner.py
 	@poetry run python scripts/spatial_join_runner.py
+	@Rscript scripts/drug_detection.R
 	@poetry run python scripts/merge_runner.py
 	@bash scripts/cleanup.sh
 	@echo "Pipeline complete."
