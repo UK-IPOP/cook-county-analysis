@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 tqdm.pandas()
 
+
 def get_live_case_archive_data() -> pd.DataFrame:
     """Loads live data from cook county api via socrata (sodapy).
 
@@ -22,26 +23,6 @@ def get_live_case_archive_data() -> pd.DataFrame:
 
     # drop where incident_street is None
     df = results_df[results_df["incident_street"].notna()]
-
-    # regex removal
-    df["clean_address"] = df.apply(lambda row: clean_address(row), axis=1)
-    df = df[df["clean_address"].notna()]
-
-    # subs city if needed and combines address fields
-    addresses = df.apply(lambda row: create_address(row), axis=1)
-    df["full_address"] = [a[0] for a in addresses]
-    df["city_subbed"] = [a[1] for a in addresses]
-    return results_df
-
-def load_case_archive_data() -> pd.DataFrame:
-    """Utility function to load in ME dataset from file.
-
-    This function also removes records where the incident_street is null
-    and applies the clean address method.
-    """
-    df = pd.read_csv("./data/Medical_Examiner_Case_Archive.csv")
-    # drop where incident_street is None
-    df = df[df["incident_street"].notna()]
 
     # regex removal
     df["clean_address"] = df.apply(lambda row: clean_address(row), axis=1)
@@ -145,9 +126,7 @@ def create_address(row: pd.Series) -> tuple[str, bool]:
     """
     street = row["clean_address"]
     city, city_subbed = city_sub(row)
-    zip_code = (
-        "" if pd.isna(row["incident_zip"]) else row["incident_zip"].strip()
-    )
+    zip_code = "" if pd.isna(row["incident_zip"]) else row["incident_zip"].strip()
     address = f"{street} {city} {zip_code}"
     return address.strip(), city_subbed
 
