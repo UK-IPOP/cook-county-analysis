@@ -12,7 +12,6 @@ pacman::p_load(readr, lubridate, tidyverse, dplyr, stringr)
 
 # cleaning for 2nd primary cause linea 
 county<- read.csv("./data/geocoded_case_archives.csv")
-print(head(county))
 y<-county$primarycause_linea
 z<-str_split_fixed(y,"AND|;|,",n=13)
 colnames(z)<-c("z1","z2","z3","z4","z5","z6","z7","z8","z9","z10","z11","z12","z13")
