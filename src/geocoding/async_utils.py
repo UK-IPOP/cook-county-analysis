@@ -19,10 +19,17 @@ def process_results(result: geopy.Location, id_: int) -> dict[str, Union[float, 
     Returns:
         dict[str, Union[float, None]]: desired attributes from the geocoded location
     """
+    if result:
+        return {
+            "lat": result.latitude,
+            "long": result.longitude,
+            "score": result.raw["score"],
+            "id": id_,
+        }
     return {
-        "latitude": result.latitude if result.latitude else None,
-        "longitude": result.longitude if result.longitude else None,
-        "score": result.raw.get("score", None),
+        "lat": None,
+        "long": None,
+        "score": None,
         "id": id_,
     }
 
