@@ -14,10 +14,10 @@ test: # needed?
 	@echo "Running pytest..."
 	@poetry run pytest tests --color=yes
 
-docs:
+build-docs:
 	@poetry run mkdocs build
 
-docs-deploy:
+deploy-docs:
 	@poetry run mkdocs gh-deploy
 
 pipeline:
