@@ -83,12 +83,12 @@ async def case_archive_runner(df):
     Args:
         df (pd.DataFrame): original case archive df
     """
-    addresses = df.full_address.values
+    addresses = df.full_address
     async with ArcGIS(adapter_factory=AioHTTPAdapter, timeout=10.0) as geolocator:
         results = [
             await r
-            for r in tqdm.as_completed(
-                [geo_locate(geolocator, place, i) for i, place in enumerate(addresses)]
+            for r in (
+                geo_locate(geolocator, place, i) for i, place in addresses.items()
             )
         ]
     processed = [process_results(result, id_) for result, id_ in results]
