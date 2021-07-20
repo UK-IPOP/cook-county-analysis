@@ -17,3 +17,4 @@ nav:
       - Pharmacy Utils: api-reference/pharmacy-utils.md
       - Distance Utils: api-reference/distance-utils.md
       - Spatial Join: api-reference/spatial-join.md
+      - Async Utils: api-reference/async-utilss.md
