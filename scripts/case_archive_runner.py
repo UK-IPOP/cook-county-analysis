@@ -16,16 +16,15 @@ if __name__ == "__main__":
     if FAST:
         print("Starting case archive runner...")
         print("Loading data...")
-        # df = cau.get_live_case_archive_data()
-        # df.to_csv("./data/extracted_case_archives.csv", index=False)  # will comment this out later
-        loaded = pd.read_csv(
-            "./data/extracted_case_archives.csv", low_memory=False
-        )  # will comment this out later
+        ssdf = cau.get_live_case_archive_data()
+        # loaded = pd.read_csv(
+        #     "./data/extracted_case_archives.csv", low_memory=False
+        # )  # will comment this out later in favor of live feed
         print(
             f"Geocoding case archive data... there are {int(len(loaded) / 500)} bunches..."
         )
         for bunch in trange(0, len(loaded) - 500, 500):
-            asyncio.run(au.case_archive_runner(loaded.loc[bunch: bunch + 500]))
+            asyncio.run(au.case_archive_runner(loaded.loc[bunch : bunch + 500]))
         geocoded_df = au.write_case_archives_to_source(loaded)
         print("Calculating distances...")
         distance_df = cau.calculate_distance(geocoded_df)

@@ -7,6 +7,7 @@ from geopy.adapters import AioHTTPAdapter
 import geopy
 import pandas as pd
 from tqdm.asyncio import tqdm
+from pathlib import Path
 
 
 def process_results(result: geopy.Location, id_: int) -> dict[str, Union[float, None]]:
@@ -99,8 +100,24 @@ async def case_archive_runner(df):
             )
         ]
     processed = [process_results(result, id_) for result, id_ in results]
-    with open("./data/case_archives_coded.json", "w") as f:
-        json.dump(processed, f)
+
+    fpath = "./data/case_archives_coded.json"
+    my_file = Path(fpath)
+    if my_file.is_file():
+        with open(fpath, "r") as f:
+            data: list = json.load(f)
+        data.extend(processed)
+        with open(fpath, "w") as f:
+            json.dump(data, f)
+    else:
+        with open(fpath, 'w') as f:
+            json.dump([], f)
+        with open(fpath, "r") as f:
+            data: list = json.load(f)
+        data.extend(processed)
+        with open(fpath, "w") as f:
+            json.dump(data, f)
+
 
 
 def write_pharmacy_to_source():
