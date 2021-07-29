@@ -25,7 +25,7 @@ if __name__ == "__main__":
             f"Geocoding case archive data... there are {int(len(loaded) / 500)} bunches..."
         )
         for bunch in trange(0, len(loaded) - 500, 500):
-            asyncio.run(au.case_archive_runner(loaded.loc[bunch : bunch + 500]))
+            asyncio.run(au.case_archive_runner(loaded.loc[bunch: bunch + 500]))
         geocoded_df = au.write_case_archives_to_source(loaded)
         print("Calculating distances...")
         distance_df = cau.calculate_distance(geocoded_df)
