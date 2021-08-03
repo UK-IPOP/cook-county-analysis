@@ -70,7 +70,7 @@ DRUG_CLASSIFICATIONS: dict[str, set] = {
 
 def load_data() -> pd.DataFrame:
     """Loads dataset."""
-    return pd.read_csv("./data/geocoded_case_archives.csv", low_memory=False)
+    return pd.read_csv("./data/joined_records.csv", low_memory=False)
 
 
 def join_cols(row) -> str:
@@ -186,4 +186,4 @@ def make_composite_fentanyl(df: pd.DataFrame):
 
 
 def write_file(df: pd.DataFrame):
-    df.to_csv("./data/extracted_drugs.csv", index=False)
+    df.to_csv("./data/output.csv", index=False)
