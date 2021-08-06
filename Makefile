@@ -30,5 +30,6 @@ pipeline:
 	@poetry run python scripts/distance_runner.py
 	@poetry run python scripts/spatial_join_runner.py
 	@poetry run python scripts/drug_extraction.py
+	@poetry run python scripts/data_formatter.py
 	@bash scripts/cleanup.sh
 	@echo "Pipeline completed."

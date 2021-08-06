@@ -10,3 +10,4 @@ find data -type f,d -not -name 'data' -not -name 'CookCounty_Pharmacies.csv' -no
 rm -rf resources/LUI15_shapefile_v1
 
 echo "Done."
+echo "You can find the finalized output in `data/output.csv`"
