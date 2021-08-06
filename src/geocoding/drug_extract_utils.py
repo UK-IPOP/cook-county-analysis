@@ -64,6 +64,8 @@ DRUG_CLASSIFICATIONS: dict[str, set] = {
     "MIDAZOLAM": {"MIDAZOLAM"},
     "NORDIAZEPAM": {"NORDIAZEPAM"},
     "TEMAZEPAM": {"TEMAZEPAM"},
+    "ALCOHOL": {"ALCOHOL"},
+    "COVID": {"COVID", "COVID-19", "CORONA"},
 }
 """Drug extraction dictionary: keys (new column labels) and values (to search for)."""
 
@@ -185,5 +187,12 @@ def make_composite_fentanyl(df: pd.DataFrame):
     )
 
 
+def find_drug_related(df: pd.DataFrame):
+    primary_cols = [f"{x}_primary" for x in DRUG_CLASSIFICATIONS.keys()]
+    secondary_cols = [f"{x}_secondary" for x in DRUG_CLASSIFICATIONS.keys()]
+    df["drug_related_primary"] = df[primary_cols].any(axis='columns')
+    df["drug_related_secondary"] = df[secondary_cols].any(axis='columns')
+
+
 def write_file(df: pd.DataFrame):
-    df.to_csv("./data/output.csv", index=False)
+    df.to_csv("./data/extracted_drugs.csv", index=False)

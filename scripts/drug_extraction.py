@@ -17,6 +17,7 @@ if __name__ == "__main__":
             lambda x: de.search_handler(x, search_words=value)
         )
     de.make_composite_fentanyl(df=dff)
+    de.find_drug_related(df=dff)
     print("Analyzing...")
     de.write_file(dff)
     print("Done.")
