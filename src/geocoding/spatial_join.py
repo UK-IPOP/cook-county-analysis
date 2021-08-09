@@ -14,6 +14,7 @@ def load_files() -> dict[str, typing.Union[pd.DataFrame, gpd.GeoDataFrame]]:
     """
     df = pd.read_csv("./data/case_archives_distances.csv", low_memory=False)
     land_use_map = gpd.read_file("./data/LANDUSE_SHAPES/land_use.shp")
+    census_tracts = gpd.read_file("./data/census_tracts/tl_2020_17_tract.shp")
     land_use_map.drop(
         [
             "FIRST_COUN",
@@ -29,7 +30,24 @@ def load_files() -> dict[str, typing.Union[pd.DataFrame, gpd.GeoDataFrame]]:
         axis=1,
         inplace=True,
     )
-    return {"case_archives": df, "land_use": land_use_map}
+    census_tracts.drop(
+        [
+            "STATEFP",
+            "COUNTYFP",
+            "TRACTCE",
+            "NAME",
+            "NAMELSAD",
+            "MTFCC",
+            "FUNCSTAT",
+            "ALAND",
+            "AWATER",
+            "INTPTLAT",
+            "INTPTLON",
+        ],
+        axis=1,
+        inplace=True,
+    )
+    return {"case_archives": df, "land_use": land_use_map, "census": census_tracts}
 
 
 def make_point_geometries(dataframe: pd.DataFrame) -> gpd.GeoDataFrame:
