@@ -5,11 +5,11 @@ echo "Downloading Shapefiles..."
 # download
 wget https://www2.census.gov/geo/tiger/TIGER2020/TRACT/tl_2020_17_tract.zip
 
-mkdir resources/census_tracts
+mkdir data/census_tracts
 
 echo "Extracting Shapefiles..."
 # unzip
-unzip tl_2020_17_tract.zip -d resources/census_tracts
+unzip tl_2020_17_tract.zip -d data/census_tracts
 
 echo "Cleaning up..."
 # cleanup
