@@ -20,6 +20,7 @@ if __name__ == "__main__":
             lambda x: de.search_handler(x, search_words=drug.search_terms)
         )
 
+    # TODO: make a function to do this
     for i, row in tqdm(dff.iterrows(), total=dff.shape[0]):
         for drug in drugs:
             values = {
@@ -34,6 +35,6 @@ if __name__ == "__main__":
                     dff.loc[i, f"{key.lower()}_secondary"] = values[key]
 
     print("Dumping file...")
-    dff.to_csv("./data/new_drugs.csv", index=False)
-    # de.write_file(dff)
+    # dff.to_csv("./data/new_drugs.csv", index=False)
+    de.write_file(dff)
     print("Done.")
