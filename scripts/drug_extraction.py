@@ -1,23 +1,39 @@
 from geocoding import drug_extract_utils as de
 from tqdm import tqdm
 
+
 if __name__ == "__main__":
     print("Starting drug extraction.")
     df = de.load_data()
-    dff = de.make_combined_secondary(df)
+    df = de.make_combined_secondary(df)
+    dff = df.copy(deep=True)
     print("Extracting drugs...")
-    # have to loop this
-    for key, value in tqdm(
-        de.DRUG_CLASSIFICATIONS.items(), total=len(de.DRUG_CLASSIFICATIONS)
-    ):
-        dff[f"{key}_primary"] = df.primarycause.apply(
-            lambda x: de.search_handler(x, search_words=value)
-        )
-        dff[f"{key}_secondary"] = df.secondary_combined.apply(
-            lambda x: de.search_handler(x, search_words=value)
-        )
-    de.make_composite_fentanyl(df=dff)
-    de.find_drug_related(df=dff)
+    drugs = de.DRUG_CLASS.load_from_file("./data/drug_dictionary.csv")
     print("Analyzing...")
-    de.write_file(dff)
+
+    # have to loop this
+    for drug in tqdm(drugs):
+        dff[f"{drug.name.lower()}_primary"] = dff.primarycause.apply(
+            lambda x: de.search_handler(x, search_words=drug.search_terms)
+        )
+        dff[f"{drug.name.lower()}_secondary"] = dff.secondary_combined.apply(
+            lambda x: de.search_handler(x, search_words=drug.search_terms)
+        )
+
+    for i, row in tqdm(dff.iterrows(), total=dff.shape[0]):
+        for drug in drugs:
+            values = {
+                k: v
+                for k, v in drug.__dict__.items()
+                if v and k != "search_terms" and k != "name"
+            }
+            for key in values.keys():
+                if row[f"{drug.name.lower()}_primary"]:
+                    dff.loc[i, f"{key.lower()}_primary"] = values[key]
+                if row[f"{drug.name.lower()}_secondary"]:
+                    dff.loc[i, f"{key.lower()}_secondary"] = values[key]
+
+    print("Dumping file...")
+    dff.to_csv("./data/new_drugs.csv", index=False)
+    # de.write_file(dff)
     print("Done.")

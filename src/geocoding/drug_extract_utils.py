@@ -1,7 +1,65 @@
+from __future__ import annotations
+
+from typing import Union
 import pandas as pd
+from dataclasses import dataclass
+import re
 
 
-DRUG_CLASSIFICATIONS: dict[str, set] = {
+@dataclass
+class DRUG_CLASS:
+    """Class to hold drug classifications."""
+
+    name: str
+    search_terms: set[str]
+    fentanyl_related: bool
+    opiate_related: bool
+    cannabis_related: bool
+    stimulant_related: bool
+    ethanol_related: bool
+    hallucinogen_related: bool
+    sedative_related: bool
+    inhalant_related: bool
+    toxic_related: bool
+    nicotine_related: bool
+    polysubstance_related: bool
+    drug_related: bool
+
+    # TODO: add validation in post init
+
+    @classmethod
+    def load_from_file(cls, file_path: str) -> list[DRUG_CLASS]:
+        """Load drug classifications from file."""
+        df = pd.read_csv(file_path)
+        return cls.from_df(df)
+
+    @classmethod
+    def from_df(cls, df: pd.DataFrame) -> list[DRUG_CLASS]:
+        """Create drug classifications from dataframe."""
+        drug_classifications = []
+        for _, row in df.iterrows():
+            drug_classifications.append(
+                cls(
+                    name=str(row["name"]),
+                    search_terms=set(str(row["search_terms"]).split(";")),
+                    fentanyl_related=bool(row["fentanyl_related"]),
+                    opiate_related=bool(row["opiate_related"]),
+                    cannabis_related=bool(row["cannabis_related"]),
+                    stimulant_related=bool(row["stimulant_related"]),
+                    ethanol_related=bool(row["ethanol_related"]),
+                    hallucinogen_related=bool(row["hallucinogen_related"]),
+                    sedative_related=bool(row["sedative_related"]),
+                    inhalant_related=bool(row["inhalant_related"]),
+                    toxic_related=bool(row["toxic_related"]),
+                    nicotine_related=bool(row["nicotine_related"]),
+                    polysubstance_related=bool(row["polysubstance_related"]),
+                    drug_related=bool(row["drug_related"]),
+                )
+            )
+        return drug_classifications
+
+
+DRUGS: dict[str, set] = {
     "COCAINE": {"COCAIN"},
     "MDA": {"MDA"},
     "MDMA": {"METHYLENEDIOXYMETHAMPHETAMINE", "METHYLEN", "MDMA"},
@@ -50,8 +108,7 @@ DRUG_CLASSIFICATIONS: dict[str, set] = {
     "LEVORPHANOL": {"DEXTRORPHAN", "LEVORPHANOL"},
     "U-47700": {"U-47700", "U47700", "47700"},
     "U-49900": {"U-49900", "U49900"},
-    "ETHANOL": {"ETHANOL", "ALCOHOL"},
-    "OPIOID": {"OPIOID", 'OPIATE'},
+    "OPIOID": {"OPIOID", "OPIATE"},
     "3-FPM": {"FLUOROPHENMETRAZINE"},
     "7-AMINO": {"AMINOCLONAZEPAM"},
     "CLONAZEPAM": {"CLONAZEPAM"},
@@ -64,7 +121,12 @@ DRUG_CLASSIFICATIONS: dict[str, set] = {
     "NORDIAZEPAM": {"NORDIAZEPAM"},
     "TEMAZEPAM": {"TEMAZEPAM"},
     "ALCOHOL": {"ALCOHOL"},
+    "ETHANOL": {"ETHANOL"},
     "COVID": {"COVID", "COVID-19", "CORONA"},
+    "INHALANT": {"INHALANT"},
+    "NICOTINE": {"NICOTINE"},
+    "CANNABIS": {"CANNABIS"},
+    "POLY": {"POLY SUB", "MULTIPLE", "VARIATIONS"},  # this one may need some reworking
 }
 """Drug extraction dictionary: keys (new column labels) and values (to search for)."""
 
@@ -85,112 +147,13 @@ def make_combined_secondary(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def search_handler(x, search_words):
+def search_handler(x, search_words: set[str]) -> Union[bool, None]:
     """Searches x for search words. Handles pd.NA values."""
     if pd.isna(x):
         return None
-    if any(word.lower() in x.lower() for word in search_words):
+    if any(re.search(word.lower(), x.lower()) for word in search_words):
         return True
     return False
-
-
-def search_fent_drugs(row, fent_toggle: bool = True, primary_toggle: bool = True):
-    """Examines various column values to identify if the record is fentanyl or nonfentanyl related."""
-    non_fent_drug_cols = [
-        "COCAINE",
-        "MDMA",
-        "MDA",
-        "MAT_MINE",
-        "AMPHETAMINE",
-        "LSD",
-        "3-FPM",
-        "7-AMINO",
-        "CLONAZEPAM",
-        "DEL_PAM",
-        "DIAZEPAM",
-        "DICLAZEPAM",
-        "ETIZOLAM",
-        "LORAZEPAM",
-        "MIDAZOLAM",
-        "NORDIAZEPAM",
-        "TEMAZEPAM",
-        "HEROIN",
-        "CODEINE",
-        "METHADONE",
-        "MORPHINE",
-        "HYDROCODONE",
-        "TRAMADOL",
-        "OXYCODONE",
-        "OXYMORPHONE",
-        "BUPRENORPHINE",
-        "MITRAGYNINE",
-        "OPIOID",
-        "OPIATE",
-    ]
-    fent_drugs_cols = [
-        "MAF",
-        "ACETYL",
-        "FIBF",
-        "BUTYRYL",
-        "4-ANPP",
-        "CYCLOPROPYL",
-        "CARFENTANIL",
-        "2-FURANYL",
-        "NFL",
-        "VFL",
-        "ACRYL",
-        "PFL",
-        "FENTANYL",
-    ]
-    if fent_toggle:
-        if primary_toggle:
-            for drug_name in fent_drugs_cols:
-                if row[f"{drug_name}_primary"] is True:
-                    return True
-            return False
-        else:
-            for drug_name in fent_drugs_cols:
-                if row[f"{drug_name}_secondary"] is True:
-                    return True
-            return False
-    else:
-        if primary_toggle:
-            for drug_name in non_fent_drug_cols:
-                if row[f"{drug_name}_primary"] is True:
-                    return True
-            return False
-        else:
-            for drug_name in non_fent_drug_cols:
-                if row[f"{drug_name}_secondary"] is True:
-                    return True
-            return False
-
-
-def make_composite_fentanyl(df: pd.DataFrame):
-    """Makes two new columns for fentanyl/not related cases."""
-    df["fentanyl_related_primary"] = df.apply(
-        lambda row: search_fent_drugs(row, fent_toggle=True, primary_toggle=True),
-        axis=1,
-    )
-    df["fentanyl_related_secondary"] = df.apply(
-        lambda row: search_fent_drugs(row, fent_toggle=False, primary_toggle=False),
-        axis=1,
-    )
-    df["nonfentanyl_related_primary"] = df.apply(
-        lambda row: search_fent_drugs(row, fent_toggle=False, primary_toggle=True),
-        axis=1,
-    )
-    df["nonfentanyl_related_secondary"] = df.apply(
-        lambda row: search_fent_drugs(row, fent_toggle=False, primary_toggle=False),
-        axis=1,
-    )
-
-
-def find_drug_related(df: pd.DataFrame):
-    primary_cols = [f"{x}_primary" for x in DRUG_CLASSIFICATIONS.keys()]
-    secondary_cols = [f"{x}_secondary" for x in DRUG_CLASSIFICATIONS.keys()]
-    df["drug_related_primary"] = df[primary_cols].any(axis='columns')
-    df["drug_related_secondary"] = df[secondary_cols].any(axis='columns')
 
 
 def write_file(df: pd.DataFrame):
