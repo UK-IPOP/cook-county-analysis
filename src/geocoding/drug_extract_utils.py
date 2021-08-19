@@ -26,6 +26,7 @@ class DRUG_CLASS:
     drug_related: bool
 
     # TODO: add validation in post init
+    # validation to input as well regarding the semicolon delimited list of drugs (min len == 2?)
 
     @classmethod
     def load_from_file(cls, file_path: str) -> list[DRUG_CLASS]:
@@ -57,78 +58,6 @@ class DRUG_CLASS:
                 )
             )
         return drug_classifications
-
-
-DRUGS: dict[str, set] = {
-    "COCAINE": {"COCAIN"},
-    "MDA": {"MDA"},
-    "MDMA": {"METHYLENEDIOXYMETHAMPHETAMINE", "METHYLEN", "MDMA"},
-    "MAT_MINE": {"METHAMPHETAMINE"},
-    "AMPHETAMINE": {"AMPHE"},
-    "METHYLPHENIDATE": {"METHYLPH"},
-    "MITRAGYNINE": {"MITRAGY"},
-    "PCP": {"PHENCYCLIDINE", "PCP", "PHENCYCL"},
-    "KETAMINE": {"KETAMINE"},
-    "LSD": {"LYSERGIC", "LSD"},
-    "BENZODIAZEPINE": {"BENZODIA"},
-    "BARBITURATE": {"BARBITU"},
-    "HYPOXIC/ISCHEMIC": {"HYPOXIC/ISCHEMIC", "HYPOXIC", "HYPOXIC-ISCHEMIC"},
-    "CYCLOBENZAPRINE": {"CYCLOBENZAP"},
-    "METAXALONE": {"METAXAL"},
-    "METHOCARBAMOL": {"METHOCARBAMOL"},
-    "CARISOPRODOL": {"CARISOPR"},
-    "TIZANIDINE": {"TIZANIDINE"},
-    "HEROIN": {"HEROIN"},
-    "METHADONE": {"METHADONE"},
-    "MAF": {"METHOXYACETYL"},
-    "ACETYL": {"ACETYL"},
-    "FIBF": {"FLUOROBUTYRYL", "FIBF", "FLUOROISOBUTYRYL", "FLUROISOBUTYRYL"},
-    "BUTYRYL": {"BUTYRYL", "ISOBUTYRYL"},
-    "4-ANPP": {"DESPROPIONYL", "ANPP", "DESPROPRIONYL"},
-    "CYCLOPROPYL": {"CYCLOPROPYL"},
-    "CARFENTANIL": {"CARFENTANYL", "CARFENTANIL"},
-    "2-FURANYL": {"FURANYL"},
-    "NFL": {"NORFENTANYL"},
-    "VFL": {"VALERYLFENTANYL"},
-    "ACRYL": {"ACRYL"},
-    "PFL": {"PARA-FLUOROFENTANYL", "PARAFLUOROFENTANYL"},
-    "FENTANYL": {"FENTAYL", "FENTANYL"},
-    "HYDROMORPHONE": {"HYDROMORPHONE"},
-    "MORPHINE": {"MORPHINE"},
-    "OXYMORPHONE": {"OXYMORPHONE"},
-    "OXYCODONE": {"OXYCODONE"},
-    "HYDROCODONE": {"HYDROCODONE"},
-    "HYDROCODOL": {"DIHYDROCODEINE", "HYDROCODOL", "DIHYROCODEINE"},
-    "CODEINE": {"CODEINE"},
-    "BUPRENORPHINE": {"BUPRENORPHINE"},
-    "MEPERIDINE": {"MEPERIDINE"},
-    "TRAMADOL": {"TRAMADOL"},
-    "TRAZODONE": {"TRAZODONE"},
-    "LEVOMETHORPHAN": {"DEXTROMETHORPHAN", "LEVOMETHORPHAN", "METHORPHAN"},
-    "LEVORPHANOL": {"DEXTRORPHAN", "LEVORPHANOL"},
-    "U-47700": {"U-47700", "U47700", "47700"},
-    "U-49900": {"U-49900", "U49900"},
-    "OPIOID": {"OPIOID", "OPIATE"},
-    "3-FPM": {"FLUOROPHENMETRAZINE"},
-    "7-AMINO": {"AMINOCLONAZEPAM"},
-    "CLONAZEPAM": {"CLONAZEPAM"},
-    "DEL_PAM": {"DELORAZEPAM"},
-    "DIAZEPAM": {"DIAZEPAM"},
-    "DICLAZEPAM": {"DICLAZEPAM"},
-    "ETIZOLAM": {"ETIZOLAM"},
-    "LORAZEPAM": {"LORAZEPAM"},
-    "MIDAZOLAM": {"MIDAZOLAM"},
-    "NORDIAZEPAM": {"NORDIAZEPAM"},
-    "TEMAZEPAM": {"TEMAZEPAM"},
-    "ALCOHOL": {"ALCOHOL"},
-    "ETHANOL": {"ETHANOL"},
-    "COVID": {"COVID", "COVID-19", "CORONA"},
-    "INHALANT": {"INHALANT"},
-    "NICOTINE": {"NICOTINE"},
-    "CANNABIS": {"CANNABIS"},
-    "POLY": {"POLY SUB", "MULTIPLE", "VARIATIONS"},  # this one may need some reworking
-}
-"""Drug extraction dictionary: keys (new column labels) and values (to search for)."""
 
 
 def load_data() -> pd.DataFrame:
