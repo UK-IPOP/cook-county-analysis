@@ -23,6 +23,7 @@ deploy-docs:
 pipeline:
 	@echo "Starting pipeline..."
 	@poetry install --no-dev
+	@bash scripts/download_census_tract_shapefiles.sh
 	@bash scripts/download_landuse_shapefiles.sh
 	@poetry run python scripts/land_use_runner.py
 	@poetry run python scripts/pharmacy_runner.py
