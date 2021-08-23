@@ -1,6 +1,16 @@
 import pandas as pd
 
 
+def fill_nulls(df: pd.DataFrame):
+    drug_cols = [
+        col
+        for col in df.columns
+        if col.endswith("_primary") or col.endswith("_secondary")
+    ]
+    null_fillers = {c: False for c in drug_cols}
+    df.fillna(null_fillers, inplace=True)
+
+
 def extract_date_data(df: pd.DataFrame):
     df["death_date"] = df.death_date.apply(lambda x: pd.to_datetime(x))
     df["death_time"] = df.death_date.apply(lambda x: x.time() if pd.notna(x) else pd.NA)
@@ -32,6 +42,7 @@ if __name__ == "__main__":
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
     extract_date_data(df)
+    fill_nulls(df)
     print("Data formatted, writing to csv")
     df.to_csv("./data/output.csv", index=False)
     print("Done.")
