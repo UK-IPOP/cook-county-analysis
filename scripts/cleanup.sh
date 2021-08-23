@@ -4,10 +4,10 @@ echo "Running final clean-up..."
 # with exception of the ones explicitly excepted
 # NOTE: directories not included so the landuse shapes will remain
 
-find data -type f,d -not -name 'data' -not -name 'CookCounty_Pharmacies.csv' -not -name 'landuse_data_dictionary.csv' -not -name 'output.csv' -delete
+find data -type f,d -not -name 'data' -not -name 'CookCounty_Pharmacies.csv' -not -name 'landuse_data_dictionary.csv' -not -name 'output.csv' -not -name 'drug_dictionary.csv' -delete
 
 # remove extracted shapefiles as well
 rm -rf resources/LUI15_shapefile_v1
 
 echo "Done."
-echo "You can find the finalized output in `data/output.csv`"
+echo "You can find the finalized output in -> data/output.csv"
