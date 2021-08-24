@@ -38,7 +38,6 @@ if __name__ == "__main__":
         ":@computed_region_h3ai_7k6i",
         "clean_address",
         "geometry",
-        "index_right",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
     extract_date_data(df)
