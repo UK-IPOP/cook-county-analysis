@@ -13,6 +13,7 @@ class DRUG_CLASS:
     name: str
     search_terms: set[str]
     fentanyl_related: bool
+    fen_analog_related: bool
     opiate_related: bool
     cannabis_related: bool
     stimulant_related: bool
@@ -43,6 +44,7 @@ class DRUG_CLASS:
                 cls(
                     name=str(row["name"]),
                     search_terms=set(str(row["search_terms"]).split(";")),
+                    fen_analog_related=bool(row["fen_analog_related"]),
                     fentanyl_related=bool(row["fentanyl_related"]),
                     opiate_related=bool(row["opiate_related"]),
                     cannabis_related=bool(row["cannabis_related"]),
