@@ -12,12 +12,15 @@ def fill_nulls(df: pd.DataFrame):
 
 
 def extract_date_data(df: pd.DataFrame):
-    df["death_date"] = df.date_of_death.apply(lambda x: pd.to_datetime(x))
-    df["death_time"] = df.death_date.apply(lambda x: x.time() if pd.notna(x) else pd.NA)
-    df["death_date"] = df.death_date.apply(lambda x: x.date())
+    df["death_datetime"] = df.date_of_death.apply(lambda x: pd.to_datetime(x))
+    df["death_time"] = df.death_datetime.apply(
+        lambda x: x.time() if pd.notna(x) else pd.NA
+    )
+    df["death_date"] = df.death_datetime.apply(lambda x: x.date())
     df["death_year"] = df.death_date.apply(lambda x: x.year)
     df["death_month"] = df.death_date.apply(lambda x: x.month)
     df["death_day"] = df.death_date.apply(lambda x: x.day)
+    df["death_week"] = df.death_datetime.dt.isocalendar().week
 
 
 if __name__ == "__main__":
@@ -33,6 +36,7 @@ if __name__ == "__main__":
         "objectid",
         "clean_address",
         "geometry",
+        "death_datetime",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
     extract_date_data(df)
