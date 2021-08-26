@@ -30,12 +30,7 @@ if __name__ == "__main__":
         "longitude",
         "latitude",
         "location",
-        "residence_city",
-        "residence_zip",
         "objectid",
-        # ":@computed_region_tu5p_2ban",
-        # ":@computed_region_nqe2_pztc",
-        # ":@computed_region_h3ai_7k6i",
         "clean_address",
         "geometry",
     ]
