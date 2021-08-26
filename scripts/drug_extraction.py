@@ -23,16 +23,16 @@ if __name__ == "__main__":
     # TODO: make a function to do this
     for i, row in tqdm(dff.iterrows(), total=dff.shape[0]):
         for drug in drugs:
-            values = {
+            categories = {
                 k: v
                 for k, v in drug.__dict__.items()
                 if v and k != "search_terms" and k != "name"
             }
-            for key in values.keys():
+            for key in categories.keys():
                 if row[f"{drug.name.lower()}_primary"]:
-                    dff.loc[i, f"{key.lower()}_primary"] = values[key]
+                    dff.loc[i, f"{key.lower()}_primary"] = categories[key]
                 if row[f"{drug.name.lower()}_secondary"]:
-                    dff.loc[i, f"{key.lower()}_secondary"] = values[key]
+                    dff.loc[i, f"{key.lower()}_secondary"] = categories[key]
 
     print("Dumping file...")
     # dff.to_csv("./data/new_drugs.csv", index=False)
