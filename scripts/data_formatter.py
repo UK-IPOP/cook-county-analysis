@@ -23,6 +23,28 @@ def extract_date_data(df: pd.DataFrame):
     df["death_week"] = df.death_datetime.dt.isocalendar().week
 
 
+def resolve_room(x: str) -> bool:
+    if "room" in x.lower():
+        # find index for word
+        words = x.lower().split()
+        index = next((i for i, word in enumerate(words) if word == "room"), None)
+        if index:
+            if words[index + 1][0].isnumeric():
+                return True
+    return False
+
+
+def classify_hotels(x: str) -> bool:
+    if pd.isna(x):
+        return None
+    hotel_words = {"hotel", "motel", "holiday inn", "travel lodge"}
+    if any(word in x.lower() for word in hotel_words):
+        return True
+    if resolve_room(x):
+        return True
+    return False
+
+
 if __name__ == "__main__":
     print("Starting final formatting.")
     df = pd.read_csv("./data/extracted_drugs.csv", low_memory=False)
@@ -36,10 +58,10 @@ if __name__ == "__main__":
         "objectid",
         "clean_address",
         "geometry",
-        "death_datetime",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
     extract_date_data(df)
+    df["motel"] = df.full_address.apply(lambda x: classify_hotels(x))
     fill_nulls(df)
     print("Data formatted, writing to csv")
     df.to_csv("./data/output.csv", index=False)
