@@ -71,7 +71,7 @@ def load_data() -> pd.DataFrame:
 
 def join_cols(row) -> str:
     """Joins various column values."""
-    return f"{row['primarycause_linea']};{row['primarycause_lineb']}{row['primarycause_linec']}{row['secondarycause']}"
+    return f"{row['primarycause_linea'] if pd.notna(row['primarycause_linea']) else ''}{row['primarycause_lineb'] if pd.notna(row['primarycause_lineb']) else ''}{row['primarycause_linec'] if pd.notna(row['primarycause_linec']) else ''}{row['secondarycause'] if pd.notna(row['secondarycause']) else ''}"
 
 
 def make_combined_secondary(df: pd.DataFrame) -> pd.DataFrame:
