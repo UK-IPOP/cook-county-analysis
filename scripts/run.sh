@@ -13,9 +13,6 @@ echo "Bulding Go program"
 echo "Running distance calculation"
 ./scripts/calculate-distance
 
-echo "Cleaning data"
-poetry run python ./scripts/postprocess.py
-
 echo "Extracting drugs"
 # can run on clean cases because does not need geo-spatial information
 .scripts/drug-extraction pipeline "./data/processed/cases_with_distances.csv" --id-col "casenumber" --target-col "combined_primary" --clean --format --format-type "csv"
@@ -28,4 +25,4 @@ cp ./scripts/output.csv ./data/drugs/primary_drugs.csv
 cp ./scripts/output.csv ./data/drugs/secondary_drugs.csv
 
 echo "Joining drugs"
-poetry run python ./scripts/join_drugs.py
+poetry run python ./scripts/transform.py
