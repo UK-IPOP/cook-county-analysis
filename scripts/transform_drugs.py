@@ -20,4 +20,4 @@ if __name__ == "__main__":
         data[d]["record_id"] = d
     drugs_wide = pd.DataFrame([data[d] for d in data])
     drugs_wide.replace(to_replace=np.NaN, value=0, inplace=True)
-    drugs_wide.to_csv("./data/drugs/drugs_wide.csv")
+    drugs_wide.to_csv("./data/drugs/drugs_wide.csv", index=False)
