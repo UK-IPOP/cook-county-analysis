@@ -47,17 +47,6 @@ def join_cols(row) -> str:
     return f"{row['primarycause'] if pd.notna(row['primarycause']) else ''}{row['primarycause_linea'] if pd.notna(row['primarycause_linea']) else ''}{row['primarycause_lineb'] if pd.notna(row['primarycause_lineb']) else ''}{row['primarycause_linec'] if pd.notna(row['primarycause_linec']) else ''}"
 
 
-def fill_nulls(df: pd.DataFrame):
-    drug_cols = [
-        col
-        for col in df.columns
-        if col.endswith("_primary") or col.endswith("_secondary")
-    ]
-    null_fillers = {c: 9 for c in drug_cols}
-    df = df.fillna(null_fillers)
-    return df
-
-
 def extract_date_data(df: pd.DataFrame):
     df["death_datetime"] = df.death_date.apply(lambda x: pd.to_datetime(x))
     df["death_time"] = df.death_datetime.apply(
@@ -109,7 +98,6 @@ def make_hot_cold(row: pd.Series, x: str) -> bool:
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    df = fill_nulls(df)
     df = df.replace(to_replace={True: 1, False: 0})
     df = df.drop_duplicates(subset=["casenumber"])
     return df
