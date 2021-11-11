@@ -12,7 +12,7 @@ cp ./scripts/output.csv ./data/drugs/primary_drugs.csv
 cp ./scripts/output.csv ./data/drugs/secondary_drugs.csv
 
 echo "Transforming drugs"
-poetry run python ./scripts/transform.py
+poetry run python ./scripts/transform_drugs.py
 
 echo "Joining wide-form drugs and records"
 poetry run python ./scripts/join_files.py
