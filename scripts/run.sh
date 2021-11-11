@@ -15,7 +15,7 @@ echo "Running distance calculation"
 
 echo "Extracting drugs"
 # can run on clean cases because does not need geo-spatial information
-.scripts/drug-extraction pipeline "./data/processed/cases_with_distances.csv" --id-col "casenumber" --target-col "combined_primary" --clean --format --format-type "csv"
+./scripts/drug-extraction pipeline "./data/processed/cases_with_distances.csv" --id-col "casenumber" --target-col "combined_primary" --clean --format --format-type "csv"
 
 cp ./scripts/output.csv ./data/drugs/primary_drugs.csv
 
