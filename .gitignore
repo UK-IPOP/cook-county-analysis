@@ -148,3 +148,5 @@ resources/Chicago_LandUse_Shapes/Landuse2015_CMAP_v1.sbx
 resources/Chicago_LandUse_Shapes/Landuse2015_CMAP_v1.shp
 resources/Chicago_LandUse_Shapes/Landuse2015_CMAP_v1.shp.xml
 resources/Chicago_LandUse_Shapes/Landuse2015_CMAP_v1.shx
+uploads/cases_with_distances.csv
+uploads/clean_cases.csv
