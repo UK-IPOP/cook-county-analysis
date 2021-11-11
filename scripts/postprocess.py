@@ -61,7 +61,6 @@ def extract_date_data(df: pd.DataFrame):
     df["death_month"] = df.death_date.apply(lambda x: x.month)
     df["death_day"] = df.death_date.apply(lambda x: x.day)
     df["death_week"] = df.death_datetime.dt.isocalendar().week
-    df.drop("death_date", axis=1, inplace=True)
 
 
 def resolve_room(x: str) -> bool:
