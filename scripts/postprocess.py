@@ -28,6 +28,13 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "F__computed_region_h3ai_7k6i",
         "chi_ward",
         "chi_commarea",
+        "OID_",
+        "Join_Count",
+        "TARGET_FID",
+        "Join_Count_1",
+        "TARGET_FID_1",
+        "Join_Count_12",
+        "TARGET_FID_12",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
 
