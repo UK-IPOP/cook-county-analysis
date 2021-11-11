@@ -24,5 +24,8 @@ cp ./scripts/output.csv ./data/drugs/primary_drugs.csv
 
 cp ./scripts/output.csv ./data/drugs/secondary_drugs.csv
 
-echo "Joining drugs"
+echo "Transforming drugs"
 poetry run python ./scripts/transform.py
+
+echo "Joining wide-form drugs and records"
+poetry run python ./scropts/join_files.py
