@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def load_cases() -> pd.DataFrame:
-    return pd.read_csv("data/processed/cases_with_distances.csv", low_memory=False)
+    return pd.read_csv("data/processed/spatially_joined_cases.csv", low_memory=False)
 
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
@@ -23,9 +23,9 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "location",
         "objectid",
         "clean_address",
-        ":@computed_region_tu5p_2ban",
-        ":@computed_region_nqe2_pztc",
-        ":@computed_region_h3ai_7k6i",
+        "F__computed_region_tu5p_2ban",
+        "F__computed_region_nqe2_pztc",
+        "F__computed_region_h3ai_7k6i",
         "chi_ward",
         "chi_commarea",
     ]
