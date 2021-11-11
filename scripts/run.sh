@@ -15,12 +15,12 @@ echo "Running distance calculation"
 
 echo "Extracting drugs"
 # can run on clean cases because does not need geo-spatial information
-./scripts/drug-extraction pipeline "./data/processed/cases_with_distances.csv" --id-col "casenumber" --target-col "combined_primary" --clean --format --format-type "csv"
+./scripts/drug-extraction pipeline "./data/processed/clean_cases.csv" --id-col "casenumber" --target-col "combined_primary" --clean --format --format-type "csv"
 
 cp ./scripts/output.csv ./data/drugs/primary_drugs.csv
 
 # can run on clean cases because does not need geo-spatial information
-./scripts/drug-extraction pipeline "./data/processed/cases_with_distances.csv" --id-col "casenumber" --target-col "secondarycause" --clean --format --format-type "csv"
+./scripts/drug-extraction pipeline "./data/processed/clean_cases.csv" --id-col "casenumber" --target-col "secondarycause" --clean --format --format-type "csv"
 
 cp ./scripts/output.csv ./data/drugs/secondary_drugs.csv
 
@@ -28,4 +28,4 @@ echo "Transforming drugs"
 poetry run python ./scripts/transform.py
 
 echo "Joining wide-form drugs and records"
-poetry run python ./scropts/join_files.py
+poetry run python ./scripts/join_files.py
