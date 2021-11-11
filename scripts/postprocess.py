@@ -6,7 +6,24 @@ def load_cases() -> pd.DataFrame:
     return pd.read_csv("data/processed/spatially_joined_cases.csv", low_memory=False)
 
 
+def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
+    data = pd.read_csv("./data/raw/landuse_data_dictionary.csv")
+    data.set_index("landuse_id", inplace=True)
+    data_dict = data.to_dict("index")
+    df["landuse_name"] = df.LANDUSE.apply(
+        lambda x: data_dict[x]["name"] if pd.notna(x) else None
+    )
+    df["landuse_sub_name"] = df.LANDUSE.apply(
+        lambda x: data_dict[x]["sub_name"] if pd.notna(x) else None
+    )
+    df["landuse_major_name"] = df.LANDUSE.apply(
+        lambda x: data_dict[x]["major_name"] if pd.notna(x) else None
+    )
+    return df
+
+
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
+    df = label_landuse(df)
     extract_date_data(df)
     df["motel"] = df.full_address.apply(lambda x: classify_hotels(x))
     df["hot_combined"] = df.apply(lambda row: make_hot_cold(row, "hot"), axis=1)
