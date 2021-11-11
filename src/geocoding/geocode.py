@@ -36,9 +36,16 @@ def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def run_geocoding(addresses: list[str]) -> list[dict[str, str | float]]:
+    search_bounds = {
+        "xmin": -86.55,
+        "ymin": 39.01,
+        "xmax": -89.99,
+        "ymax": 42.99,
+        "spatialReference": {"wkid": 4326},
+    }
     results = []
     for address in track(addresses, description="Geocoding..."):
-        geocoded_info = geocode(address)
+        geocoded_info = geocode(address, search_extent=search_bounds)
         if geocoded_info:
             best_result = geocoded_info[0]
             geo_data = {
