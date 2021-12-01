@@ -32,6 +32,11 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     # make primary cause col combined
     df["primary_combined"] = df.apply(lambda row: join_cols(row), axis=1)
 
+    # make cols identifying duplications
+    df["matching_addresses"] = df["full_address"] == df["geocoded_address"]
+    df["repeated_address"] = df.full_address.duplicated()
+    df["repeated_lat_long"] = df.duplicated(subset=["geocoded_latitude", "geocoded_longitude"])
+
     # remove unwanted cols
     not_needed_cols = [
         "incident_street",
