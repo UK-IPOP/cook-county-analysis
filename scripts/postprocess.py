@@ -22,6 +22,12 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
+    death_locations = pd.read_csv("data/raw/death_locations.csv", low_memory=False)
+    combined = df.merge(death_locations, how="left", on="casenumber")
+    return combined
+
+
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df = label_landuse(df)
     extract_date_data(df)
@@ -35,7 +41,9 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     # make cols identifying duplications
     df["matching_addresses"] = df["full_address"] == df["geocoded_address"]
     df["repeated_address"] = df.full_address.duplicated()
-    df["repeated_lat_long"] = df.duplicated(subset=["geocoded_latitude", "geocoded_longitude"])
+    df["repeated_lat_long"] = df.duplicated(
+        subset=["geocoded_latitude", "geocoded_longitude"]
+    )
 
     # remove unwanted cols
     not_needed_cols = [
@@ -61,6 +69,7 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df.drop(not_needed_cols, axis=1, inplace=True)
 
     df = clean_data(df)
+    df = merge_death_location_labels(df)
     return df
 
 
