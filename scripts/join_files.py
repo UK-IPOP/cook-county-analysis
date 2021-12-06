@@ -1,16 +1,17 @@
 import pandas as pd
-import numpy as np
 
 
-def fill_nulls(df: pd.DataFrame):
+def fill_nulls(table: pd.DataFrame):
+    """Fills nulls in columns that end with `_primary` or `_secondary` with `9`.
+    """
     drug_cols = [
         col
-        for col in df.columns
+        for col in table.columns
         if col.endswith("_primary") or col.endswith("_secondary")
     ]
     null_fillers = {c: 9 for c in drug_cols}
-    df = df.fillna(null_fillers)
-    return df
+    new_table = table.fillna(null_fillers)
+    return new_table
 
 
 if __name__ == "__main__":
