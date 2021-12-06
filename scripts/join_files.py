@@ -2,8 +2,7 @@ import pandas as pd
 
 
 def fill_nulls(table: pd.DataFrame):
-    """Fills nulls in columns that end with `_primary` or `_secondary` with `9`.
-    """
+    """Fills nulls in columns that end with `_primary` or `_secondary` with `9`."""
     drug_cols = [
         col
         for col in table.columns

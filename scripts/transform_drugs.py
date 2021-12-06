@@ -1,6 +1,7 @@
-import pandas as pd
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
+import pandas as pd
 
 if __name__ == "__main__":
     primary = pd.read_csv("./data/drugs/primary_drugs.csv")
