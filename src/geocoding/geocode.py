@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import os
+import re
 
 import dotenv
 import pandas as pd
 from arcgis.geocoding import geocode
 from arcgis.gis import GIS
 from rich.progress import track
-import re
 
 
 def initialize():

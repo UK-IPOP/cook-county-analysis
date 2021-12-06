@@ -1,5 +1,6 @@
+from rich import pretty, print
+
 from . import fetch_data, geocode
-from rich import print, pretty
 
 pretty.install()
 
