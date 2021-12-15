@@ -35,16 +35,28 @@ def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def prepare_fixed_df(df: pd.DataFrame) -> pd.DataFrame:
+    df["clean_address"] = df.apply(clean_address, axis=1)
+    addresses = df.apply(lambda row: create_fixed_address(row), axis=1)
+    df["full_address"] = addresses
+    return df
+
+
 def run_geocoding(addresses: list[str]) -> list[dict[str, str | float]]:
     search_bounds = {
-        "xmin": -86.55,
-        "ymin": 39.01,
-        "xmax": -89.99,
-        "ymax": 42.99,
+        "xmin": -87.38,
+        "ymin": 36.96,
+        "xmax": -91.60,
+        "ymax": 42.57,
         "spatialReference": {"wkid": 4326},
     }
     results = []
     for address in track(addresses, description="Geocoding..."):
+        if pd.isna(address) or "unknown" in address:
+            results.append(
+                {"address": address, "latitude": None, "longitude": None, "score": None}
+            )
+            continue
         geocoded_info = geocode(address, search_extent=search_bounds)
         if geocoded_info:
             best_result = geocoded_info[0]
@@ -89,7 +101,7 @@ def clean_address(row: pd.Series) -> int | str | None:
     """
     a = row["incident_street"]
     # handles 'unknown' and variations
-    if "unk" in a.lower():
+    if pd.isna(a) or "unk" in a.lower() or "n/a" in a.lower():
         return None
     no_apartment_info = remove_apartment_info(a.lower())
     return no_apartment_info
@@ -138,20 +150,89 @@ def create_address(row: pd.Series) -> tuple[str, bool]:
     return address.strip(), city_subbed
 
 
+def create_fixed_address(row: pd.Series) -> str:
+    """Creates the address field column for each row of a dataframe.
+
+    Calls city_sub.
+
+    Args:
+        row (pd.Series): row in a dataframe.
+
+    Returns:
+        str: cleaned address
+    """
+    street = row["clean_address"] if row["clean_address"] else ""
+    city = (
+        row["incident_city"]
+        if pd.notna(row["incident_city"]) and "unkn" not in row["incident_city"]
+        else ""
+    )
+    zip_code = "" if pd.isna(row["incident_zip"]) else row["incident_zip"].strip()
+    address = f"{street} {city} {zip_code}"
+    return address.strip()
+
+
+def composite_lat_long(row: pd.Series, toggle: str) -> float | None:
+    if toggle == "lat":
+        if pd.notna(row["latitude"]):
+            return row["latitude"]
+        elif pd.notna(row["geocoded_latitude"]):
+            return row["geocoded_latitude"]
+        else:
+            return None
+    elif toggle == "long":
+        if pd.notna(row["longitude"]):
+            return row["longitude"]
+        elif pd.notna(row["geocoded_longitude"]):
+            return row["geocoded_longitude"]
+        else:
+            return None
+    else:
+        raise Exception("expected toggle value to be either `lat` or `long`")
+
+
+def combine_geo_results(
+    coded_df: pd.DataFrame, original_df: pd.DataFrame
+) -> pd.DataFrame:
+    df = pd.merge(
+        left=original_df,
+        right=coded_df[
+            [
+                "casenumber",
+                "geocoded_latitude",
+                "geocoded_longitude",
+                "geocoded_score",
+                "geocoded_address",
+                "full_address",
+            ]
+        ],
+        on="casenumber",
+        how="left",
+    )
+    df["recovered"] = df.geocoded_score.apply(lambda x: 1 if pd.notna(x) else 0)
+    df["final_latitude"] = df.apply(lambda row: composite_lat_long(row, "lat"), axis=1)
+    df["final_longitude"] = df.apply(
+        lambda row: composite_lat_long(row, "long"), axis=1
+    )
+    return df
+
+
 def main():
     cases = load_case_file()
-    # cases = cases[:500]
+    no_geo = cases[(pd.isna(cases["latitude"])) | (pd.isna(cases["longitude"]))]
+    # no_geo = no_geo.loc[:50]
 
     # preprocess
-    cases = prepare_df(cases)
-    geocoding_results = run_geocoding(cases.full_address.values)
+    no_geo = prepare_fixed_df(no_geo)
+    geocoding_results = run_geocoding(no_geo.full_address.values)
     # assign results to dataframe
-    cases["geocoded_latitude"] = [x["latitude"] for x in geocoding_results]
-    cases["geocoded_longitude"] = [x["longitude"] for x in geocoding_results]
-    cases["geocoded_score"] = [x["score"] for x in geocoding_results]
-    cases["geocoded_address"] = [x["address"] for x in geocoding_results]
+    no_geo["geocoded_latitude"] = [x["latitude"] for x in geocoding_results]
+    no_geo["geocoded_longitude"] = [x["longitude"] for x in geocoding_results]
+    no_geo["geocoded_score"] = [x["score"] for x in geocoding_results]
+    no_geo["geocoded_address"] = [x["address"] for x in geocoding_results]
+    recovered_df = combine_geo_results(no_geo, cases)
     # save results
-    cases.to_csv("data/processed/geocoded_cases.csv", index=False)
+    recovered_df.to_csv("data/processed/recovered_lat_long.csv", index=False)
 
 
 if __name__ == "__main__":
