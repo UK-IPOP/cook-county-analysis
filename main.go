@@ -15,7 +15,7 @@ import (
 
 func main() {
 	// need to handle errors
-	cases := readCsvFile("data/processed/geocoded_cases.csv")
+	cases := readCsvFile("data/processed/recovered_lat_long.csv")
 	pharmacies := readCsvFile("data/raw/pharmacies.csv")
 	// find target lat/long cols for each dataset using first row headers
 	casesLat := findTargetColIndex("geocoded_latitude", cases[0])
