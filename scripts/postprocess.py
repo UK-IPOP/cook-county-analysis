@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def load_cases() -> pd.DataFrame:
-    return pd.read_csv("data/processed/spatially_joined_cases.csv", low_memory=False)
+    return pd.read_csv("data/processed/spatially_joined_records.csv", low_memory=False)
 
 
 def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
@@ -52,20 +52,16 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "incident_city",
         "incident_zip",
         "location",
+        "latitude",
+        "longitude",
         "objectid",
-        "clean_address",
+        "chi_ward",
+        "chi_commarea",
         "F__computed_region_tu5p_2ban",
         "F__computed_region_nqe2_pztc",
         "F__computed_region_h3ai_7k6i",
-        "chi_ward",
-        "chi_commarea",
-        "OID_",
-        "Join_Count",
-        "TARGET_FID",
-        "Join_Count_1",
-        "TARGET_FID_1",
-        "Join_Count_12",
-        "TARGET_FID_12",
+        "geocoded_latitude",
+        "geocoded_longitude",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
 
