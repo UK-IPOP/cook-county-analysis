@@ -57,7 +57,9 @@ def run_geocoding(addresses: list[str]) -> list[dict[str, str | float]]:
                 {"address": address, "latitude": None, "longitude": None, "score": None}
             )
             continue
-        geocoded_info = geocode(address, search_extent=search_bounds)
+        geocoded_info = geocode(
+            address, search_extent=search_bounds, location_type="rooftop"
+        )
         if geocoded_info:
             best_result = geocoded_info[0]
             geo_data = {
