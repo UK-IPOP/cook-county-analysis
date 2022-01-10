@@ -25,6 +25,7 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
 
 def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
     death_locations = pd.read_csv("data/raw/death_locations.csv", low_memory=False)
+    death_locations.columns = death_locations.columns.str.lower()
     combined = df.merge(death_locations, how="left", on="casenumber")
     return combined
 
