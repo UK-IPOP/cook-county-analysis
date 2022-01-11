@@ -63,6 +63,20 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "F__computed_region_h3ai_7k6i",
         "geocoded_latitude",
         "geocoded_longitude",
+        "distance_between_points",
+        "FIRST_COUNTY",
+        "LANDUSE2",
+        "TRACTCE",
+        "NAME",
+        "NAMELSAD",
+        "MTFCC",
+        "FUNCSTAT",
+        "ALAND",
+        "AWATER",
+        "OBJECTID_12",
+        "COMMENT",
+        "matching_addresses",
+        "record_id",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
 
