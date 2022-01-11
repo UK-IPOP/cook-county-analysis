@@ -22,4 +22,5 @@ if __name__ == "__main__":
     print(df.shape)
 
     df = fill_nulls(df)
+    df.drop(columns=["record_id"], axis=1, inplace=True)
     df.to_csv("./data/output/finalized.csv", index=False)

@@ -76,7 +76,6 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "OBJECTID_12",
         "COMMENT",
         "matching_addresses",
-        "record_id",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
 
