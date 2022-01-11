@@ -122,7 +122,7 @@ func initializeProgress(length int) *progressbar.ProgressBar {
 	bar := progressbar.NewOptions(length,
 		progressbar.OptionEnableColorCodes(true),
 		progressbar.OptionSetWidth(20),
-		progressbar.OptionSetDescription("[blue]Extracting drugs...[reset] "),
+		progressbar.OptionSetDescription("[blue]Calculating distances...[reset] "),
 		progressbar.OptionSetTheme(progressbar.Theme{
 			Saucer:        "[green]=[reset]",
 			SaucerHead:    "[green]>[reset]",
