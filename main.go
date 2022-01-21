@@ -17,33 +17,32 @@ func main() {
 	cases := readCsvFile("data/processed/recovered_lat_long.csv")
 	pharmacies := readCsvFile("data/raw/pharmacies.csv")
 	// find target lat/long cols for each dataset using first row headers
-	casesLatIndex := findTargetColIndex("geocoded_latitude", cases[0])
-	casesLongIndex := findTargetColIndex("geocoded_longitude", cases[0])
-	oldCasesLat := findTargetColIndex("latitude", cases[0])
-	oldCasesLong := findTargetColIndex("longitude", cases[0])
+	casesLatIndex := findTargetColIndex("final_latitude", cases[0])
+	casesLongIndex := findTargetColIndex("final_longitude", cases[0])
+
 	pharmLat := findTargetColIndex("geocoded_latitude", pharmacies[0])
 	pharmLong := findTargetColIndex("geocoded_longitude", pharmacies[0])
+
 	var caseMinDistances []float64
-	var oldVsNew []float64
 	bar := initializeProgress(len(cases) - 1)
 	for _, caseRow := range cases[1:] {
-		minDist := math.MaxFloat64
 		caseLat, _ := strconv.ParseFloat(caseRow[casesLatIndex], 64)
 		caseLong, _ := strconv.ParseFloat(caseRow[casesLongIndex], 64)
-		oldLat, _ := strconv.ParseFloat(caseRow[oldCasesLat], 64)
-		oldLong, _ := strconv.ParseFloat(caseRow[oldCasesLong], 64)
-		if caseLat == 0 || caseLong == 0 || oldLat == 0 || oldLong == 0 {
-			oldVsNew = append(oldVsNew, -1)
+		if caseLat == 0.0 || caseLong == 0.0 {
+			caseMinDistances = append(caseMinDistances, -1)
+			err := bar.Add(1)
+			if err != nil {
+				log.Fatal("could not increment progress")
+			}
+			continue
 		}
-		d := distance(caseLat, caseLong, oldLat, oldLong)
-		oldVsNew = append(oldVsNew, d)
+		minDist := math.MaxFloat64
 		for i, pharmRow := range pharmacies[1:] {
-			// find distance between case and pharmacy
-
+			// find distance between case point and pharmacy point
 			pharmLat, _ := strconv.ParseFloat(pharmRow[pharmLat], 64)
 			pharmLong, _ := strconv.ParseFloat(pharmRow[pharmLong], 64)
 			dist := distance(caseLat, caseLong, pharmLat, pharmLong)
-			if i == 1 || dist < minDist {
+			if i == 0 || dist < minDist {
 				minDist = dist
 			}
 		}
@@ -55,11 +54,9 @@ func main() {
 	}
 	for i := range cases {
 		if i == 0 {
-			cases[i] = append(cases[i], "distance_between_points")
 			cases[i] = append(cases[i], "closest_pharmacy")
 			continue
 		}
-		cases[i] = append(cases[i], strconv.FormatFloat(oldVsNew[i-1], 'f', -1, 64))
 		cases[i] = append(cases[i], strconv.FormatFloat(caseMinDistances[i-1], 'f', -1, 64))
 	}
 	// write to file
