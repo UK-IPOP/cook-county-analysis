@@ -4,13 +4,12 @@ package main
 
 import (
 	"encoding/csv"
+	"github.com/schollz/progressbar/v3"
 	"log"
 	"math"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/schollz/progressbar/v3"
 )
 
 func main() {
@@ -18,19 +17,19 @@ func main() {
 	cases := readCsvFile("data/processed/recovered_lat_long.csv")
 	pharmacies := readCsvFile("data/raw/pharmacies.csv")
 	// find target lat/long cols for each dataset using first row headers
-	casesLat := findTargetColIndex("geocoded_latitude", cases[0])
-	casesLong := findTargetColIndex("geocoded_longitude", cases[0])
+	casesLatIndex := findTargetColIndex("geocoded_latitude", cases[0])
+	casesLongIndex := findTargetColIndex("geocoded_longitude", cases[0])
 	oldCasesLat := findTargetColIndex("latitude", cases[0])
 	oldCasesLong := findTargetColIndex("longitude", cases[0])
 	pharmLat := findTargetColIndex("geocoded_latitude", pharmacies[0])
 	pharmLong := findTargetColIndex("geocoded_longitude", pharmacies[0])
-	caseMinDistances := []float64{}
-	oldVsNew := []float64{}
+	var caseMinDistances []float64
+	var oldVsNew []float64
 	bar := initializeProgress(len(cases) - 1)
 	for _, caseRow := range cases[1:] {
 		minDist := math.MaxFloat64
-		caseLat, _ := strconv.ParseFloat(caseRow[casesLat], 64)
-		caseLong, _ := strconv.ParseFloat(caseRow[casesLong], 64)
+		caseLat, _ := strconv.ParseFloat(caseRow[casesLatIndex], 64)
+		caseLong, _ := strconv.ParseFloat(caseRow[casesLongIndex], 64)
 		oldLat, _ := strconv.ParseFloat(caseRow[oldCasesLat], 64)
 		oldLong, _ := strconv.ParseFloat(caseRow[oldCasesLong], 64)
 		if caseLat == 0 || caseLong == 0 || oldLat == 0 || oldLong == 0 {
@@ -49,7 +48,10 @@ func main() {
 			}
 		}
 		caseMinDistances = append(caseMinDistances, minDist)
-		bar.Add(1)
+		err := bar.Add(1)
+		if err != nil {
+			log.Fatal("could not increment progress")
+		}
 	}
 	for i := range cases {
 		if i == 0 {
@@ -65,9 +67,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
 	csvwriter := csv.NewWriter(f)
-	csvwriter.WriteAll(cases)
+	writeErr := csvwriter.WriteAll(cases)
+	if writeErr != nil {
+		log.Fatal(writeErr)
+	}
 }
 
 // need to return errors in all below functions
@@ -77,7 +87,12 @@ func readCsvFile(filePath string) [][]string {
 	if err != nil {
 		log.Fatal("Unable to read input file "+filePath, err)
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
 
 	csvReader := csv.NewReader(f)
 	records, err := csvReader.ReadAll()
@@ -98,11 +113,12 @@ func findTargetColIndex(targetCol string, headers []string) int {
 }
 
 func distance(lat1 float64, lng1 float64, lat2 float64, lng2 float64) float64 {
-	radlat1 := float64(math.Pi * lat1 / 180)
-	radlat2 := float64(math.Pi * lat2 / 180)
+	// formula taken from here: https://www.geodatasource.com/developers/go
+	radlat1 := math.Pi * lat1 / 180
+	radlat2 := math.Pi * lat2 / 180
 
-	theta := float64(lng1 - lng2)
-	radtheta := float64(math.Pi * theta / 180)
+	theta := lng1 - lng2
+	radtheta := math.Pi * theta / 180
 
 	dist := math.Sin(radlat1)*math.Sin(radlat2) + math.Cos(radlat1)*math.Cos(radlat2)*math.Cos(radtheta)
 
