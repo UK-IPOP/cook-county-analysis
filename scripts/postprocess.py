@@ -64,7 +64,6 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "geocoded_latitude",
         "geocoded_longitude",
         # new cols
-        "distance_between_points",
         "FIRST_COUNTY",
         "LANDUSE2",
         "OS_MGMT",
@@ -78,7 +77,6 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "FUNCSTAT",
         "ALAND",
         "AWATER",
-        "OBJECTID_12",
         "COMMENT",
         "matching_addresses",
     ]
