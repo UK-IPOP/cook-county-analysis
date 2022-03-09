@@ -204,12 +204,13 @@ def combine_geo_results(
 
 def main():
     cases = load_case_file()
-    no_geo = cases[(pd.isna(cases["latitude"])) | (pd.isna(cases["longitude"]))]
-    # no_geo = no_geo.loc[:50]
 
     # preprocess
-    no_geo = prepare_fixed_df(no_geo)
-    geocoding_results = run_geocoding(no_geo.full_address.values)
+    prepared = prepare_df(cases)
+    no_geo = cases[(pd.isna(prepared["latitude"])) | (pd.isna(prepared["longitude"]))]
+    # no_geo = no_geo.loc[:50]
+
+    geocoding_results = run_geocoding(no_geo.incident_address.str.title())
     # assign results to dataframe
     no_geo["geocoded_latitude"] = [x["latitude"] for x in geocoding_results]
     no_geo["geocoded_longitude"] = [x["longitude"] for x in geocoding_results]
