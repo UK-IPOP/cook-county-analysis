@@ -11,13 +11,16 @@ license = 'GPL-3.0-or-later'
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 Rtree = "^0.9.7"
 sodapy = "^2.1.0"
 arcgis = "^1.9.1"
 geopy = "^2.2.0"
 python-dotenv = "^0.19.1"
 rich = "^10.13.0"
+plotly = "^5.6.0"
+scipy = "^1.8.0"
+seaborn = "^0.11.2"
 
 
 [tool.poetry.dev-dependencies]

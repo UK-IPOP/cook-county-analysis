@@ -41,8 +41,11 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df["primary_combined"] = df.apply(lambda row: join_cols(row), axis=1)
 
     # make cols identifying duplications
-    df["matching_addresses"] = df["full_address"] == df["geocoded_address"]
+    # FIX
     df["repeated_address"] = df.full_address.duplicated()
+
+    # COMPARE death address to incident address
+
     df["repeated_lat_long"] = df.duplicated(
         subset=["geocoded_latitude", "geocoded_longitude"]
     )
@@ -78,7 +81,6 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "ALAND",
         "AWATER",
         "COMMENT",
-        "matching_addresses",
     ]
     df.drop(not_needed_cols, axis=1, inplace=True)
 
