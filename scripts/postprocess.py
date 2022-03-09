@@ -82,11 +82,14 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "ALAND",
         "AWATER",
         "COMMENT",
+        "death_street",
+        "death_city",
+        "death_zip",
     ]
-    df.drop(not_needed_cols, axis=1, inplace=True)
 
-    df = clean_data(df)
     df = merge_death_location_labels(df)
+    df.drop(not_needed_cols, axis=1, inplace=True)
+    df = clean_data(df)
     return df
 
 
