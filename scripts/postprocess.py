@@ -84,6 +84,7 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "COMMENT",
         "death_street",
         "death_city",
+        "death_state",
         "death_zip",
     ]
 
