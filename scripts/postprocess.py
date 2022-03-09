@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import geocoding
 
 
 def load_cases() -> pd.DataFrame:
@@ -26,29 +27,29 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
 def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
     death_locations = pd.read_csv("data/raw/death_locations.csv", low_memory=False)
     death_locations.columns = death_locations.columns.str.lower()
-    combined = df.merge(death_locations, how="left", on="casenumber")
+    death_addresses = death_locations.apply(
+        lambda row: geocoding.geocode.create_address(row, "death"), axis=1
+    )
+    death_locations["death_address"] = [a[0] for a in death_addresses]
+    # COMPARE death address to incident address
+    combined = df.drop(["incident_date", "death_date"], axis=1).merge(
+        death_locations, how="left", on="casenumber"
+    )
+    combined["incident_matches_death"] = (
+        combined.incident_address == combined.death_address
+    )
     return combined
 
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df = label_landuse(df)
     extract_date_data(df)
-    df["motel"] = df.full_address.apply(lambda x: classify_hotels(x))
+    df["motel"] = df.incident_address.apply(lambda x: classify_hotels(x))
     df["hot_combined"] = df.apply(lambda row: make_hot_cold(row, "hot"), axis=1)
     df["cold_combined"] = df.apply(lambda row: make_hot_cold(row, "cold"), axis=1)
 
     # make primary cause col combined
     df["primary_combined"] = df.apply(lambda row: join_cols(row), axis=1)
-
-    # make cols identifying duplications
-    # FIX
-    df["repeated_address"] = df.full_address.duplicated()
-
-    # COMPARE death address to incident address
-
-    df["repeated_lat_long"] = df.duplicated(
-        subset=["geocoded_latitude", "geocoded_longitude"]
-    )
 
     # remove unwanted cols
     not_needed_cols = [
