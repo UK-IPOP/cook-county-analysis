@@ -25,7 +25,7 @@ def load_case_file() -> pd.DataFrame:
 def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
     addresses = df.apply(lambda row: create_address(row, flag="incident"), axis=1)
     df["incident_address"] = [a[0] for a in addresses]
-    df["incident_address_sub"] = [a[1] for a in addresses]
+    df["incident_address_city_sub"] = [a[1] for a in addresses]
     return df
 
 
