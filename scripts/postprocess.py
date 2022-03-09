@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import pandas as pd
 import geocoding
+from scourgify import normalize_address_record
+from scourgify.exceptions import UnParseableAddressError
+import numpy as np
 
 
 def load_cases() -> pd.DataFrame:
@@ -41,6 +44,40 @@ def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
     return combined
 
 
+def flag_is_duplicated(df: pd.DataFrame) -> np.ndarray:
+    """
+    Flags cases that are duplicated.
+
+    Returns a mask of booleans indicating whether a case is duplicated based on its index
+    in the original df provided.
+    """
+    # initial duplicates
+    duped_addrs = df[
+        df.incident_address.duplicated(keep=False)
+    ].incident_address.dropna()
+    normalized_addrs = []
+    for i, addr in duped_addrs.iteritems():
+        try:
+            normal = normalize_address_record(addr)
+            normal_string = " ".join(y for y in normal.values() if y)
+            normalized_addrs.append((i, normal_string, True, "valid"))
+        except UnParseableAddressError:
+            normalized_addrs.append((i, addr, False, "unparseable"))
+        except ValueError:
+            normalized_addrs.append((i, addr, False, "invalid"))
+
+    address_df = pd.DataFrame(
+        normalized_addrs,
+        columns=["lookup_index", "normalized_address", "valid", "reason"],
+    )
+    valid_addresses = address_df[address_df.valid == True]
+    valid_unique_indices = valid_addresses[
+        valid_addresses.normalized_address.duplicated(keep=False)
+    ].lookup_index
+    mask = df.index.isin(valid_unique_indices)
+    return mask
+
+
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df = label_landuse(df)
     extract_date_data(df)
@@ -50,6 +87,9 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
 
     # make primary cause col combined
     df["primary_combined"] = df.apply(lambda row: join_cols(row), axis=1)
+
+    # flag duplicates
+    df["repeat_address"] = flag_is_duplicated(df)
 
     # remove unwanted cols
     not_needed_cols = [
