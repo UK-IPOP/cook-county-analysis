@@ -136,44 +136,39 @@ def city_sub(row: pd.Series) -> tuple[str, bool]:
     return city, subbed
 
 
-def create_address(row: pd.Series) -> tuple[str, bool]:
+def create_address(row: pd.Series, flag: str) -> tuple[str, bool]:
     """Creates the address field column for each row of a dataframe.
-
-    Calls city_sub.
 
     Args:
         row (pd.Series): row in a dataframe.
+        flag (str): flag to whether to perform on incident or death
 
     Returns:
         tuple[str, bool]: cleaned address and whether a city substitution was performed.
     """
-    street = row["clean_address"]
-    city, city_subbed = city_sub(row)
-    zip_code = "" if pd.isna(row["incident_zip"]) else row["incident_zip"].strip()
-    address = f"{street} {city} {zip_code}"
-    return address.strip(), city_subbed
-
-
-def create_fixed_address(row: pd.Series) -> str:
-    """Creates the address field column for each row of a dataframe.
-
-    Calls city_sub.
-
-    Args:
-        row (pd.Series): row in a dataframe.
-
-    Returns:
-        str: cleaned address
-    """
-    street = row["clean_address"] if row["clean_address"] else ""
-    city = (
-        row["incident_city"]
-        if pd.notna(row["incident_city"]) and "unkn" not in row["incident_city"]
-        else ""
-    )
-    zip_code = "" if pd.isna(row["incident_zip"]) else row["incident_zip"].strip()
-    address = f"{street} {city} {zip_code}"
-    return address.strip()
+    if flag == "incident":
+        street = (
+            clean_address(row["incident_street"])
+            if pd.notna(row["incident_street"])
+            else ""
+        )
+        city, subbed = city_sub(row)
+        zip_code = "" if pd.isna(row["incident_zip"]) else row["incident_zip"]
+        address = f"{street if street else ''} {city if city else ''} {zip_code if zip_code else ''}".upper().strip()
+        return address, subbed
+    elif flag == "death":
+        street = (
+            clean_address(row["death_street"]) if pd.notna(row["death_street"]) else ""
+        )
+        city = row["death_city"].title().strip()
+        state = (
+            row["death_state"].title().strip() if pd.notna(row["death_state"]) else ""
+        )
+        zip_code = "" if pd.isna(row["death_zip"]) else row["death_zip"]
+        address = f"{street if street else ''} {city if city else ''} {state if state else ''} {zip_code if zip_code else ''}".upper().strip()
+        return address, False
+    else:
+        raise ValueError("flag must be either 'incident' or 'death'")
 
 
 def composite_lat_long(row: pd.Series, toggle: str) -> float | None:
