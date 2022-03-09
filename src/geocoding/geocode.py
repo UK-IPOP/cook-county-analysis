@@ -23,22 +23,9 @@ def load_case_file() -> pd.DataFrame:
 
 
 def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
-    # drop where incident_street is None
-    df = df[df["incident_street"].notna()]
-    # regex removal
-    df["clean_address"] = df.apply(clean_address, axis=1)
-    df = df[df["clean_address"].notna()]
-    # subs city if needed and combines address fields
-    addresses = df.apply(lambda row: create_address(row), axis=1)
-    df["full_address"] = [a[0] for a in addresses]
-    df["city_subbed"] = [a[1] for a in addresses]
-    return df
-
-
-def prepare_fixed_df(df: pd.DataFrame) -> pd.DataFrame:
-    df["clean_address"] = df.apply(clean_address, axis=1)
-    addresses = df.apply(lambda row: create_fixed_address(row), axis=1)
-    df["full_address"] = addresses
+    addresses = df.apply(lambda row: create_address(row, flag="incident"), axis=1)
+    df["incident_address"] = [a[0] for a in addresses]
+    df["incident_address_sub"] = [a[1] for a in addresses]
     return df
 
 
@@ -202,7 +189,6 @@ def combine_geo_results(
                 "geocoded_longitude",
                 "geocoded_score",
                 "geocoded_address",
-                "full_address",
             ]
         ],
         on="casenumber",
