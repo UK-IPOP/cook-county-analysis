@@ -1,9 +1,12 @@
 # %%
 
+from collections import defaultdict
 import pandas as pd
 import seaborn as sns
 import plotly.express as px
 import plotly.io as pio
+import numpy as np
+from collections import defaultdict
 
 pio.renderers.default = "notebook"
 # %%
@@ -26,7 +29,7 @@ len([c for c in df.columns if c.endswith("_primary") or c.endswith("_secondary")
 print(df.closest_pharmacy.describe())
 # %%
 
-drugs = pd.read_csv("../data/drugs/output.csv")
+drugs = pd.read_csv("../data/drugs/combined_drugs.csv")
 drugs.head()
 
 # %%
@@ -44,12 +47,16 @@ geo.head()
 geo.closest_pharmacy.describe()
 
 # %%
-top_drugs = drugs[~drugs.drug_name.isin(["Alcohol", "Covid"])]
-top_drugs.drug_name.value_counts().to_csv("drug_counts.csv")
-# %%
-df[(df.opiate_primary == 1) | (df.opiate_secondary == 1)].groupby("death_year").count()[
-    "casenumber"
-].to_csv("opioid_related_counts.csv")
+drug_counts = (
+    drugs.groupby("drug_name").count().sort_values("record_id", ascending=False)
+)
+drug_counts[:15]["record_id"].to_csv("drug_counts.csv")
+
 # %%
 df.groupby("death_year").count()["casenumber"].to_csv("total_cases_per_year.csv")
+# %%
+drugs[drugs.drug_name.isin(("Alcohol", "Cocaine", "Fentanyl-Name", "Heroin"))].groupby(
+    ["drug_name", "word_found"]
+).agg(["mean", "count"])
+
 # %%
