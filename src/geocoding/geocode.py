@@ -92,20 +92,22 @@ def remove_apartment_info(x: str) -> str:
     return result2
 
 
-def clean_address(row: pd.Series) -> int | str | None:
+def clean_address(street: str) -> str | None:
     """Cleans an address by calling other utility functions.
 
     Args:
-        row (pd.Series): row in a dataframe
+        street (str): street address
 
     Returns:
-        Union[int, str, None]: cleaned address or None
+        Union[str, None]: cleaned address or None
     """
-    a = row["incident_street"]
     # handles 'unknown' and variations
-    if pd.isna(a) or "unk" in a.lower() or "n/a" in a.lower():
+    if pd.isna(street):
         return None
-    no_apartment_info = remove_apartment_info(a.lower())
+    s = street.lower().strip()
+    if "unk" in s or "n/a" in s or s == "same" or s == "none":
+        return None
+    no_apartment_info = remove_apartment_info(s)
     return no_apartment_info
 
 
