@@ -147,7 +147,7 @@ def create_address(row: pd.Series, flag: str) -> tuple[str, bool]:
         street = (
             clean_address(row["death_street"]) if pd.notna(row["death_street"]) else ""
         )
-        city = row["death_city"].title().strip()
+        city = row["death_city"].title().strip() if pd.notna(row["death_city"]) else ""
         state = (
             row["death_state"].title().strip() if pd.notna(row["death_state"]) else ""
         )
