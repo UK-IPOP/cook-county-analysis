@@ -93,7 +93,6 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
 
     # remove unwanted cols
     not_needed_cols = [
-        "incident_street",
         "incident_city",
         "incident_zip",
         "location",
@@ -122,7 +121,6 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "ALAND",
         "AWATER",
         "COMMENT",
-        "death_street",
         "death_city",
         "death_state",
         "death_zip",
