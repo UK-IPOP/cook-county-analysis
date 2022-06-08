@@ -128,7 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .vscode/settings.json
-data/
 .DS_Store
 
 resources/Chicago_LandUse_Shapes/domain_LANDUSE.cpg
@@ -153,3 +152,9 @@ uploads/clean_cases.csv
 
 .idea/
 reports/report_2022-01-21.html
+data/drugs/*.csv
+data/drugs/*.jsonl
+data/raw
+data/processed
+data/field_descriptions.json
+data/output/finalized copy.csv
