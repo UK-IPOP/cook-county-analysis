@@ -4,7 +4,7 @@ authors:
 - family-names: "Anthony"
   given-names: "Nicholas"
   orcid: "https://orcid.org/my-orcid?orcid=0000-0002-6692-3401"
-title: "cook-county-geo"
+title: "Cook County Medical Examiner Case Archives Analysis"
 version: 1.0.0
 date-released: 2022-06-08
 url: "https://github.com/UK-IPOP/geocoding"
