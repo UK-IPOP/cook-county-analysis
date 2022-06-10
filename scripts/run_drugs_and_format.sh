@@ -1,19 +1,20 @@
 #! /usr/bin/env bash
 
-echo "Extracting drugs"
+echo "Extracting drugs..."
 
 # can run on clean cases because does not need geo-spatial information
-./data/drugs/drug-extraction pipeline "./data/processed/clean_cases.csv" --id-col "casenumber" --target-col "primary_combined" --clean --format --format-type "csv"
+de-workflow \
+    execute \
+    --algorithm="osa" \
+    ./data/processed/clean_cases.csv \
+    "casenumber" \
+    "primary_combined" \
+    "secondarycause"
 
-cp ./data/drugs/output.csv ./data/drugs/primary_drugs.csv
 
-# can run on clean cases because does not need geo-spatial information
-./data/drugs/drug-extraction pipeline "./data/processed/clean_cases.csv" --id-col "casenumber" --target-col "secondarycause" --clean --format --format-type "csv"
+mv ./merged_results.csv ./data/drugs/
+mv ./dense_results.csv ./data/output/
+mv ./report.html ./data/output/
 
-cp ./data/drugs/output.csv ./data/drugs/secondary_drugs.csv
-
-echo "Transforming drugs"
-poetry run python ./scripts/transform_drugs.py
-
-echo "Joining wide-form drugs and records"
-poetry run python ./scripts/join_files.py
+echo "Reformatting drugs"
+poetry run python ./scripts/reformat_drugs.py
