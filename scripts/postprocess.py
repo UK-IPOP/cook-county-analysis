@@ -101,13 +101,9 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "objectid",
         "chi_ward",
         "chi_commarea",
-        "F__computed_region_tu5p_2ban",
-        "F__computed_region_nqe2_pztc",
-        "F__computed_region_h3ai_7k6i",
         "geocoded_latitude",
         "geocoded_longitude",
         # new cols
-        "FIRST_COUNTY",
         "LANDUSE2",
         "OS_MGMT",
         "FAC_NAME",
