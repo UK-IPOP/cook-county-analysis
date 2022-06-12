@@ -3,7 +3,10 @@ import pandas as pd
 
 
 def rollup(row: pd.Series, fields: list[str]) -> int:
-    return sum([row[x] for x in fields])  # type: ignore
+    for field in fields:
+        if row[field] == 1:
+            return 1
+    return 0
 
 
 if __name__ == "__main__":
@@ -13,8 +16,6 @@ if __name__ == "__main__":
     drug_cols = [
         col for col in drugs_wide.columns if col.endswith("_1") or col.endswith("_2")
     ]
-    null_fillers = {c: 9 for c in drug_cols}
-    drugs_wide = drugs_wide.fillna(null_fillers)
     drugs_wide.rename(
         columns={
             c: c.replace("_1", "_primary").replace("_2", "_secondary")
@@ -39,6 +40,9 @@ if __name__ == "__main__":
     drugs_wide["nitazene"] = drugs_wide.apply(
         lambda row: rollup(row, limited_fields), axis=1
     )
+
+    null_fillers = {c: 9 for c in drug_cols}
+    drugs_wide = drugs_wide.fillna(null_fillers)
 
     drugs_wide.replace(to_replace=np.NaN, value=0, inplace=True)
     drugs_wide.to_csv("./data/output/finalized.csv", index=False)
