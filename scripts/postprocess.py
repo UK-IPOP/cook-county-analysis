@@ -35,8 +35,10 @@ def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
     )
     death_locations["death_address"] = [a[0] for a in death_addresses]
     # COMPARE death address to incident address
-    combined = df.drop(["incident_date", "death_date"], axis=1).merge(
-        death_locations, how="left", on="casenumber"
+    combined = df.merge(
+        death_locations.drop(columns=["death_date", "incident_date"]),
+        how="left",
+        on="casenumber",
     )
     combined["incident_matches_death"] = (
         combined.incident_address == combined.death_address
@@ -80,7 +82,7 @@ def flag_is_duplicated(df: pd.DataFrame) -> np.ndarray:
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df = label_landuse(df)
-    extract_date_data(df)
+    df = extract_date_data(df)
     df["motel"] = df.incident_address.apply(lambda x: classify_hotels(x))
     df["hot_combined"] = df.apply(lambda row: make_hot_cold(row, "hot"), axis=1)
     df["cold_combined"] = df.apply(lambda row: make_hot_cold(row, "cold"), axis=1)
@@ -133,7 +135,8 @@ def join_cols(row) -> str:
     return f"{row['primarycause'] if pd.notna(row['primarycause']) else ''}{row['primarycause_linea'] if pd.notna(row['primarycause_linea']) else ''}{row['primarycause_lineb'] if pd.notna(row['primarycause_lineb']) else ''}{row['primarycause_linec'] if pd.notna(row['primarycause_linec']) else ''}"
 
 
-def extract_date_data(df: pd.DataFrame):
+def extract_date_data(dff: pd.DataFrame) -> pd.DataFrame:
+    df = dff.copy()
     df["death_datetime"] = df.death_date.apply(lambda x: pd.to_datetime(x))
     df["death_time"] = df.death_datetime.apply(
         lambda x: x.time() if pd.notna(x) else pd.NA
@@ -143,6 +146,7 @@ def extract_date_data(df: pd.DataFrame):
     df["death_month"] = df.death_date.apply(lambda x: x.month)
     df["death_day"] = df.death_date.apply(lambda x: x.day)
     df["death_week"] = df.death_datetime.dt.isocalendar().week
+    return df
 
 
 def resolve_room(x: str) -> bool:

@@ -44,5 +44,5 @@ if __name__ == "__main__":
     null_fillers = {c: 9 for c in drug_cols}
     drugs_wide = drugs_wide.fillna(null_fillers)
 
-    drugs_wide.replace(to_replace=np.NaN, value=0, inplace=True)
+    # drugs_wide.replace(to_replace=np.NaN, value=0, inplace=True)
     drugs_wide.to_csv("./data/output/finalized.csv", index=False)
