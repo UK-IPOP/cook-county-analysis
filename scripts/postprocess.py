@@ -67,6 +67,11 @@ def flag_is_duplicated(df: pd.DataFrame) -> np.ndarray:
             normalized_addrs.append((i, addr, False, "unparseable"))
         except ValueError:
             normalized_addrs.append((i, addr, False, "invalid"))
+        except AttributeError as e:
+            if addr == 0.0:
+                normalized_addrs.append((i, addr, False, "invalid"))
+            else:
+                print(e, "---", addr)
 
     address_df = pd.DataFrame(
         normalized_addrs,
@@ -160,7 +165,7 @@ def resolve_room(x: str) -> bool:
 
 
 def classify_hotels(x: str) -> bool | None:
-    if pd.isna(x):
+    if pd.isna(x) or type(x) != str:
         return None
     hotel_words = {"hotel", "motel", "holiday inn", "travel lodge"}
     if any(word in x.lower() for word in hotel_words):
