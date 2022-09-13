@@ -8,7 +8,7 @@ import numpy as np
 
 
 def load_cases() -> pd.DataFrame:
-    return pd.read_csv("data/processed/spatially_joined_records.csv", low_memory=False)
+    return pd.read_csv("./data/processed/cook_ccounty_cases.csv", low_memory=False)
 
 
 def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
@@ -28,7 +28,7 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
-    death_locations = pd.read_csv("data/raw/death_locations.csv", low_memory=False)
+    death_locations = pd.read_csv("./data/raw/death_locations.csv", low_memory=False)
     death_locations.columns = death_locations.columns.str.lower()
     death_addresses = death_locations.apply(
         lambda row: geocoding.geocode.create_address(row, "death"), axis=1
@@ -151,6 +151,7 @@ def extract_date_data(dff: pd.DataFrame) -> pd.DataFrame:
     df["death_month"] = df.death_date.apply(lambda x: x.month)
     df["death_day"] = df.death_date.apply(lambda x: x.day)
     df["death_week"] = df.death_datetime.dt.isocalendar().week
+    df["death_day_of_week"] = df.death_datetime.dt.day_name()
     return df
 
 
@@ -201,7 +202,12 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     df = load_cases()
     df = preprocess(df)
-    df.to_csv("data/processed/clean_cases.csv", index=False)
+    # link to "community population"
+    community_population = pd.read_csv(
+        "https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/0916f1de-ae37-4476-bf4e-6485ba08c975/download/Census2020SupplementCCA.csv"
+    )
+    df.merge(community_population, how="left", left_on="pri_neigh", right_on="GEOG")
+    df.to_csv("./data/processed/clean_cases.csv", index=False)
 
 
 if __name__ == "__main__":

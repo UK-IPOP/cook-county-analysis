@@ -1,9 +1,8 @@
 package main
 
-// TODO: make errors more specific, make dirs if they don't exist, etc.
-
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"math"
 	"os"
@@ -13,59 +12,59 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
+type Pair struct {
+	Id1, Id2 int
+}
+
 func main() {
 	// need to handle errors
-	cases := readCsvFile("cases.csv")
+	datasets := map[string][][]string{
+		"alcoholCases":     readCsvFile("./alcohol_cases.csv"),
+		"alcoholControls":  readCsvFile("./alcohol_controls.csv"),
+		"fentanylCases":    readCsvFile("./fentanyl_cases.csv"),
+		"fentanylControls": readCsvFile("./fentanyl_controls.csv"),
+	}
 
-	// find target lat/long cols for each dataset using first row headers
-	casesLatIndex := findTargetColIndex("final_latitude", cases[0])
-	casesLongIndex := findTargetColIndex("final_longitude", cases[0])
+	var allDistances []float64
+	distanceMap := map[string]float64{}
+	for name, dataset := range datasets {
+		bar := initializeProgress(len(dataset)-1, name)
 
-	var caseAvgDistances []float64
-	bar := initializeProgress(len(cases) - 1)
+		latIndex := findTargetColIndex("final_latitude", dataset[0])
+		longIndex := findTargetColIndex("final_longitude", dataset[0])
 
-	// skip header row
-	for i, caseRow := range cases[1:] {
-		caseLat, _ := strconv.ParseFloat(caseRow[casesLatIndex], 64)
-		caseLong, _ := strconv.ParseFloat(caseRow[casesLongIndex], 64)
-		if caseLat == 0.0 || caseLong == 0.0 {
-			caseAvgDistances = append(caseAvgDistances, -1)
-			err := bar.Add(1)
-			if err != nil {
+		var distances []float64
+		for i, row := range dataset[1:] {
+			lat, _ := strconv.ParseFloat(row[latIndex], 64)
+			long, _ := strconv.ParseFloat(row[longIndex], 64)
+			for j, row2 := range dataset[1:] {
+				if i == j {
+					// don't calculate distance between same point
+					continue
+				}
+				lat2, _ := strconv.ParseFloat(row2[latIndex], 64)
+				long2, _ := strconv.ParseFloat(row2[longIndex], 64)
+				distances = append(distances, distance(lat, long, lat2, long2))
+			}
+			if err := bar.Add(1); err != nil {
 				log.Fatal("could not increment progress")
 			}
-			continue
 		}
-		var totalDist float64 = 0.0
-		for j, caseRow2 := range cases[1:] {
-			if i == j {
-				continue
-			}
-			caseLat2, _ := strconv.ParseFloat(caseRow2[casesLatIndex], 64)
-			caseLong2, _ := strconv.ParseFloat(caseRow2[casesLongIndex], 64)
-
-			// find distance between case point and case2 point
-			dist := distance(caseLat, caseLong, caseLat2, caseLong2)
-			totalDist += dist
+		totalDistance := 0.0
+		for _, distance := range distances {
+			totalDistance += distance
 		}
-		avgDist := totalDist / float64(len(cases)-1)
-
-		err := bar.Add(1)
-		if err != nil {
-			log.Fatal("could not increment progress")
-		}
-		caseAvgDistances = append(caseAvgDistances, avgDist)
+		avgDistance := totalDistance / float64(len(distances))
+		distanceMap[name] = avgDistance
+		allDistances = append(allDistances, distances...)
 	}
-
-	for i := range cases {
-		if i == 0 {
-			cases[i] = append(cases[i], "avg_distance")
-			continue
-		}
-		cases[i] = append(cases[i], strconv.FormatFloat(caseAvgDistances[i-1], 'f', 4, 64))
+	log.Println(distanceMap)
+	var distanceMapArr [][]string
+	for name, distance := range distanceMap {
+		distanceMapArr = append(distanceMapArr, []string{name, strconv.FormatFloat(distance, 'f', 2, 64)})
 	}
 	// write to file
-	f, err := os.Create("cases_with_distances.csv")
+	f, err := os.Create("./distance_groups.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,77 +75,32 @@ func main() {
 		}
 	}(f)
 	csvwriter := csv.NewWriter(f)
-	writeErr := csvwriter.WriteAll(cases)
+	writeErr := csvwriter.WriteAll(distanceMapArr)
 	if writeErr != nil {
 		log.Fatal(writeErr)
 	}
 
-	// --------------------------------------
-	controls := readCsvFile("controls.csv")
-
-	// find target lat/long cols for each dataset using first row headers
-	controlLatIndex := findTargetColIndex("final_latitude", controls[0])
-	controlLongIndex := findTargetColIndex("final_longitude", controls[0])
-
-	var controlAvgDistances []float64
-	bar2 := initializeProgress(len(controls) - 1)
-
-	// skip header row
-	for i, controlRow := range controls[1:] {
-		controlLat, _ := strconv.ParseFloat(controlRow[controlLatIndex], 64)
-		controlLong, _ := strconv.ParseFloat(controlRow[controlLongIndex], 64)
-		if controlLat == 0.0 || controlLong == 0.0 {
-			controlAvgDistances = append(controlAvgDistances, -1)
-			err := bar2.Add(1)
-			if err != nil {
-				log.Fatal("could not increment progress")
-			}
-			continue
-		}
-		var totalDist float64 = 0.0
-		for j, controlRow2 := range controls[1:] {
-			if i == j {
-				continue
-			}
-			controlLat2, _ := strconv.ParseFloat(controlRow2[controlLatIndex], 64)
-			controlLong2, _ := strconv.ParseFloat(controlRow2[controlLongIndex], 64)
-
-			// find distance between control point and control2 point
-			dist := distance(controlLat, controlLong, controlLat2, controlLong2)
-			totalDist += dist
-		}
-		avgDist := totalDist / float64(len(controls)-1)
-
-		err := bar2.Add(1)
-		if err != nil {
-			log.Fatal("could not increment progress")
-		}
-		controlAvgDistances = append(controlAvgDistances, avgDist)
+	totalDistances := 0.0
+	for _, distance := range allDistances {
+		totalDistances += distance
 	}
+	avgDistance := totalDistances / float64(len(allDistances))
+	log.Println("Average distance across all points:", avgDistance, "miles.")
+}
 
-	for i := range controls {
-		if i == 0 {
-			controls[i] = append(controls[i], "avg_distance")
-			continue
+func isCompleted(i int, j int, pointList []Pair) bool {
+	var pair Pair
+	if i < j {
+		pair = Pair{i, j}
+	} else {
+		pair = Pair{j, i}
+	}
+	for _, point := range pointList {
+		if point == pair {
+			return true
 		}
-		controls[i] = append(controls[i], strconv.FormatFloat(controlAvgDistances[i-1], 'f', 4, 64))
 	}
-	// write to file
-	f, err = os.Create("controls_with_distances.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func(f *os.File) {
-		err := f.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(f)
-	csvwriter = csv.NewWriter(f)
-	writeErr = csvwriter.WriteAll(controls)
-	if writeErr != nil {
-		log.Fatal(writeErr)
-	}
+	return false
 }
 
 // need to return errors in all below functions
@@ -199,15 +153,17 @@ func distance(lat1 float64, lng1 float64, lat2 float64, lng2 float64) float64 {
 	dist = dist * 180 / math.Pi
 	dist = dist * 60 * 1.1515
 
-	return dist * 1.609344 // KM
+	// return dist * 1.609344 // KM
+	return dist // miles
 }
 
 // initializeProgress initializes a pre-configured progress bar of a given length.
-func initializeProgress(length int) *progressbar.ProgressBar {
+func initializeProgress(length int, description string) *progressbar.ProgressBar {
 	bar := progressbar.NewOptions(length,
 		progressbar.OptionEnableColorCodes(true),
 		progressbar.OptionSetWidth(20),
-		progressbar.OptionSetDescription("[blue]Calculating distances...[reset] "),
+		progressbar.OptionClearOnFinish(),
+		progressbar.OptionSetDescription(fmt.Sprintf("[blue]Calculating distances (%s)...[reset] ", description)),
 		progressbar.OptionSetTheme(progressbar.Theme{
 			Saucer:        "[green]=[reset]",
 			SaucerHead:    "[green]>[reset]",

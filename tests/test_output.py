@@ -7,13 +7,13 @@ import pytest
 @pytest.fixture
 def df() -> pd.DataFrame:
     """Loads output dataframe."""
-    return pd.read_csv("data/output/finalized.csv", low_memory=False)
+    return pd.read_csv("../data/output/finalized.csv", low_memory=False)
 
 
 @pytest.fixture
 def landuse_dict() -> list[dict[str, str]]:
     data = []
-    with open("data/raw/landuse_data_dictionary.csv", "r") as f:
+    with open("../data/raw/landuse_data_dictionary.csv", "r") as f:
         csvreader = csv.DictReader(f)
         for line in csvreader:
             data.append(line)
