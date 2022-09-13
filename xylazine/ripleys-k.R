@@ -9,7 +9,6 @@ library(smacpod)
 library(tidyr)
 library(dplyr)
 
-setwd("~/Projects/Kentucky/chicago-geo/xylazine")
 # --------- 
 
 print("starting xylazine and fentanyl")
