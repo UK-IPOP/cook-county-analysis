@@ -4,12 +4,13 @@ package main
 
 import (
 	"encoding/csv"
-	"github.com/schollz/progressbar/v3"
 	"log"
 	"math"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 func main() {
