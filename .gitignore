@@ -55,3 +55,16 @@ data
 
 # Go workspace file
 go.work
+
+# R stuff
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+
+# binaries
+calculator
+scrape
