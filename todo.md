@@ -4,9 +4,7 @@ current:
 
 - [x] cleanup gitignore
   - [x] add golang gitignore
-- [ ] create conda environment
-  - [ ] add conda to gitignore
-  - [x] remove poetry env and config files
+- [x] remove poetry env and config files
 - [x] move xylazine to notebooks
   - [ ] cleanup xylazine folder, rename to xylazine analysis
   - [ ] put README inside notebooks folder (and xylazine folder?)
@@ -20,7 +18,7 @@ current:
   - [ ] census tract shapefile
   - [ ] parks shapefile
   - [ ] assessors boundaries (x2) shapefile
-- [ ] use go to do cosine distance (between lots of things?)
+- [x] use go to do cosine distance (between lots of things?)
 - [ ] use GH codespace for development (i.e. linux environment thus can use poetry for geopandas)
 - [ ] comment up the golang files
   - [ ] add docstrings
@@ -30,9 +28,9 @@ once working:
 
 - [ ] remove old scripts
 - [ ] remove old data
-- [ ] delete other projects locally
-  - [ ] MIL
-  - [ ] medical centers scraper
-- [ ] use fetch data script in cuyhoga analysis project
-  - [ ] this analysis should be getting updated as well
+- [x] delete other projects locally
+  - [x] MIL
+  - [x] medical centers scraper
+- [ ] use (something like) fetch data script in cuyhoga analysis project
+  - [ ] that analysis (ohio) should be getting updated as well
 - [ ] update README
