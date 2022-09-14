@@ -2,7 +2,11 @@
 
 # this script reads the medical centers file, geocodes them, and writes the results to a new file
 
+# clear last run
+rm data/geocoded_medical_centers.jsonl
+
 while read -r line; do
+    
     name=$(jq -r '.name' <<< "$line")
     address=$(jq -r '.address' <<< "$line")
 
@@ -11,6 +15,6 @@ while read -r line; do
         --method geocode \
         --output json \
         | \
-        jq -c --arg NAME "$name" '{name: $NAME, address, latitude: .lat, longitude: .lng, score}' > data/geocoded_medical_centers.jsonl
+        jq -c --arg NAME "$name" '{name: $NAME, address, latitude: .lat, longitude: .lng, score}' >> data/geocoded_medical_centers.jsonl
 
 done < data/medical_centers.jsonl
