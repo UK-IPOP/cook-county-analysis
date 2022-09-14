@@ -15,6 +15,11 @@ import (
 )
 
 func main() {
+	err := os.MkdirAll("data", os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var invalidRows = 0
 
 	pharmacies := loadPharmacies()

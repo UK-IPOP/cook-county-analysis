@@ -12,11 +12,14 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-// I think this may be missing some
 func main() {
-
 	wg := sync.WaitGroup{}
 	wg.Add(2)
+
+	err := os.MkdirAll("data", os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fpath := filepath.Join("data", "medical_centers.jsonl")
 	outFile, err := os.Create(fpath)
