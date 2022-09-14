@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # a REALLY basic one-liner to convert a JSONL file to CSV
 
 # takes the current JSONL file name and the new CSV file name as arguments

@@ -1,3 +1,4 @@
+#! /bin/bash
 
 # this script reads the medical centers file, geocodes them, and writes the results to a new file
 
