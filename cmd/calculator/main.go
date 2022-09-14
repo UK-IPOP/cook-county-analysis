@@ -189,7 +189,8 @@ func makePharmacyPoints(pharmacies []map[string]interface{}) []Point {
 // needs to return error
 func loadPharmacies() []map[string]interface{} {
 	// read file
-	fileData, err := os.ReadFile("data/source/pharmacies.json")
+	fpath := filepath.Join("data", "source", "pharmacies.json")
+	fileData, err := os.ReadFile(fpath)
 	if err != nil {
 		log.Fatal(err)
 	}
