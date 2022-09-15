@@ -19,13 +19,28 @@ scrape-centers: build
     ./scrape
     echo "Geocoding scraped centers..."
     ./scripts/geocode.sh
-    rm data/medical_centers.jsonl
-    rm ./scrape
     echo "Done."
 
 
-calculate-distances: build scrape-centers
+calculate-distances: scrape-centers
     echo "Calculating distances..."
     ./calculator
+    rm ./calculator
+    echo "Done."
+
+
+spatially-join: calculate-distances
+    echo "Spatially joining..."
+    ./scripts/spatially_join.sh
+    echo "Done."
+
+
+cleanup:
+    # downloaded files
+    rm -r downloads
+    # intermediate files (real files are .csv)
+    rm -r data/*.jsonl
+    # binaries
+    rm ./scrape
     rm ./calculator
     echo "Done."

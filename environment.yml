@@ -1,0 +1,12 @@
+name: geo
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - geopandas
+  - black
+  - flake8
+  - isort
+  - rich
+prefix: /opt/homebrew/Caskroom/miniconda/base/envs/geo
