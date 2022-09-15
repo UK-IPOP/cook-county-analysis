@@ -26,8 +26,8 @@ __pypackages__/
 # jetbrains
 .idea/
 
-# potential data files
-data
+# potential secure files
+secure
 *.json
 *.csv
 *.jsonl
@@ -64,7 +64,3 @@ go.work
 .RData
 .RDataTmp
 
-
-# binaries
-./calculator
-./scrape

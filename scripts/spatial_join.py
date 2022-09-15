@@ -7,7 +7,7 @@ from rich.progress import track
 
 
 def load_records() -> pd.DataFrame:
-    source_file = Path("data") / "records_with_distances.jsonl"
+    source_file = Path("secure") / "records_with_distances.jsonl"
     df = pd.read_json(source_file, lines=True, orient="records")
     return df
 
@@ -42,7 +42,7 @@ def convert_to_geodataframe(df: pd.DataFrame) -> geopandas.GeoDataFrame:
 
 
 def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
-    fpath = Path("data") / "source" / "landuse_data_dictionary.csv"
+    fpath = Path("secure") / "source" / "landuse_data_dictionary.csv"
     data = pd.read_csv(fpath)
     data.set_index("landuse_id", inplace=True)
     data_dict = data.to_dict("index")
@@ -60,7 +60,7 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
-    fpath = Path("data") / "source" / "death_locations.csv"
+    fpath = Path("secure") / "source" / "death_locations.csv"
     death_locations = pd.read_csv(fpath, low_memory=False)
     death_locations.columns = death_locations.columns.str.lower()
 
@@ -160,29 +160,29 @@ def main():
     geo_df = convert_to_geodataframe(df=configured_df)
 
     print(f"Starting shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
-    for url in track(urls_to_join, description="Performing Spatial Joins data"):
+    for url in track(urls_to_join, description="Performing Spatial Joins secure"):
         gdf = geopandas.read_file(url).to_crs("EPSG:4326")
         geo_df = geopandas.sjoin(geo_df, gdf, how="left", predicate="within")
         geo_df.drop(columns=["index_right"], inplace=True, errors="ignore")
         print(f"Updated shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
 
-    print("Merging in supplemental data...")
+    print("Merging in supplemental secure...")
     geo_df = merge_supplemental_data(df=geo_df)
     print(f"Updated shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
 
-    print("Now joining land use data..")
+    print("Now joining land use secure..")
     landuse_df = geopandas.read_file(landuse_path).to_crs("EPSG:4326")
     geo_df = geopandas.sjoin(geo_df, landuse_df, how="left", predicate="within")
     del landuse_df  # because very large
     print(f"Updated shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
 
-    print("Now labeling land use data...")
+    print("Now labeling land use secure...")
     geo_df = label_landuse(df=geo_df)
 
-    print("Now joining death location data...")
+    print("Now joining death location secure...")
     geo_df = merge_death_location_labels(df=geo_df)
 
-    print("Now extracting death date data...")
+    print("Now extracting death date secure...")
     geo_df = extract_date_data(df=geo_df)
 
     print("Classifying hotels/motels...")
@@ -203,7 +203,9 @@ def main():
         f"Ultimately, we added {final_columns - initial_cols} columns to the dataset."
     )
     print("Writing to file...")
-    geo_df.to_csv("data/records_with_spatial_data.csv", index=False)
+    out_dir = Path("data")
+    out_dir.mkdir(exist_ok=True)
+    geo_df.to_csv(out_dir / "records_with_spatial_data.csv", index=False)
 
 
 if __name__ == "__main__":

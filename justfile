@@ -34,12 +34,17 @@ spatially-join: calculate-distances
     ./scripts/spatially_join.sh
     echo "Done."
 
+report: spatially-join
+    echo "Generating report..."
+    pandas_profiling data/records_with_spatial_data.csv reports/profile.html --title (date "+%Y-%m-%d") --pool_size 4
+    echo "Done."
+
 
 cleanup:
     # downloaded files
     rm -r downloads
     # intermediate files (real files are .csv)
-    rm -r data/*.jsonl
+    rm secure/*.jsonl
     # binaries
     rm ./scrape
     rm ./calculator

@@ -2,7 +2,7 @@
 
 # this script reads the medical centers file, geocodes them, and writes the results to a new file
 
-rm -f data/geocoded_medical_centers.jsonl
+rm -f secure/geocoded_medical_centers.jsonl
 
 while read -r line; do
     
@@ -14,10 +14,10 @@ while read -r line; do
         --method geocode \
         --output json \
         | \
-        jq -c --arg NAME "$name" '{name: $NAME, address, geocoded_latitude: .lat, geocoded_longitude: .lng, geocoded_score}' >> data/geocoded_medical_centers.jsonl
+        jq -c --arg NAME "$name" '{name: $NAME, address, geocoded_latitude: .lat, geocoded_longitude: .lng, geocoded_score}' >> secure/geocoded_medical_centers.jsonl
 
-done < data/medical_centers.jsonl
+done < secure/medical_centers.jsonl
 
 
 # then convert to csv
-jq -sr '(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' data/geocoded_medical_centers.jsonl > data/geocoded_medical_centers.csv
+jq -sr '(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' secure/geocoded_medical_centers.jsonl > data/geocoded_medical_centers.csv

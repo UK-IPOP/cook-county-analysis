@@ -15,17 +15,17 @@ import (
 )
 
 func main() {
-	err := os.MkdirAll("data", os.ModePerm)
+	err := os.MkdirAll("secure", os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	var invalidRows = 0
 
-	pharmacies := loadJsonLines(filepath.Join("data", "source", "pharmacies.jsonl"))
+	pharmacies := loadJsonLines(filepath.Join("secure", "source", "pharmacies.jsonl"))
 	pharmacyPoints := makePoints(pharmacies)
 
-	medicalCenters := loadJsonLines(filepath.Join("data", "geocoded_medical_centers.jsonl"))
+	medicalCenters := loadJsonLines(filepath.Join("secure", "geocoded_medical_centers.jsonl"))
 	medicalCenterPoints := makePoints(medicalCenters)
 
 	inFilePath := filepath.Join("downloads", "wide_records.jsonl")
@@ -113,7 +113,7 @@ func main() {
 	}
 
 	// write to file
-	fpath := filepath.Join("data", "records_with_distances.jsonl")
+	fpath := filepath.Join("secure", "records_with_distances.jsonl")
 	outFile, err := os.Create(fpath)
 	if err != nil {
 		log.Fatal(err)
@@ -166,8 +166,8 @@ func extractPointFields(row map[string]string) (Point, error) {
 		if lat == "" || long == "" {
 			// this currently happens 2,086 times (as of 9/14/22)
 			// causes:
-			// - missing lat/long in original data
-			// - missing lat/long in geocoded data
+			// - missing lat/long in original secure
+			// - missing lat/long in geocoded secure
 			//    - this ^ is likely due to failure to geocode because of invalid address
 			return Point{}, errors.New("could not find a valid lat/long")
 		}

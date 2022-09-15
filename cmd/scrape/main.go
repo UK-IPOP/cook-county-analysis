@@ -16,12 +16,12 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
-	err := os.MkdirAll("data", os.ModePerm)
+	err := os.MkdirAll("secure", os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fpath := filepath.Join("data", "medical_centers.jsonl")
+	fpath := filepath.Join("secure", "medical_centers.jsonl")
 	outFile, err := os.Create(fpath)
 	if err != nil {
 		log.Fatal(err)
