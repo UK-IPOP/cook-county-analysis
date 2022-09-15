@@ -22,8 +22,11 @@ func main() {
 
 	var invalidRows = 0
 
-	pharmacies := loadPharmacies()
-	pharmacyPoints := makePharmacyPoints(pharmacies)
+	pharmacies := loadJsonLines(filepath.Join("data", "source", "pharmacies.jsonl"))
+	pharmacyPoints := makePoints(pharmacies)
+
+	medicalCenters := loadJsonLines(filepath.Join("data", "geocoded_medical_centers.jsonl"))
+	medicalCenterPoints := makePoints(medicalCenters)
 
 	inFilePath := filepath.Join("downloads", "wide_records.jsonl")
 	file, err := os.Open(inFilePath)
@@ -49,6 +52,7 @@ func main() {
 			if extractionErr.Error() == "could not find a valid lat/long" {
 				invalidRows++
 				row["closest_pharmacy_km"] = ""
+				row["closest_medical_center_km"] = ""
 				data = append(data, row)
 				err := spinner.Add(1)
 				if err != nil {
@@ -69,6 +73,10 @@ func main() {
 
 		minDist := minimumDistance(point, pharmacyPoints)
 		row["closest_pharmacy_km"] = strconv.FormatFloat(minDist, 'f', 2, 64)
+
+		minDist = minimumDistance(point, medicalCenterPoints)
+		row["closest_medical_center_km"] = strconv.FormatFloat(minDist, 'f', 2, 64)
+
 		data = append(data, row)
 		err = spinner.Add(1)
 		if err != nil {
@@ -176,9 +184,9 @@ func extractPointFields(row map[string]string) (Point, error) {
 
 }
 
-func makePharmacyPoints(pharmacies []map[string]interface{}) []Point {
+func makePoints(records []map[string]interface{}) []Point {
 	var points []Point
-	for _, pharmacy := range pharmacies {
+	for _, pharmacy := range records {
 		lat := pharmacy["geocoded_latitude"].(float64)
 		lon := pharmacy["geocoded_longitude"].(float64)
 		points = append(points, Point{lat, lon})
@@ -186,20 +194,25 @@ func makePharmacyPoints(pharmacies []map[string]interface{}) []Point {
 	return points
 }
 
-// needs to return error
-func loadPharmacies() []map[string]interface{} {
+func loadJsonLines(fpath string) []map[string]interface{} {
 	// read file
-	fpath := filepath.Join("data", "source", "pharmacies.json")
-	fileData, err := os.ReadFile(fpath)
+	file, err := os.Open(fpath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var pharmacies []map[string]interface{}
-	err = json.Unmarshal(fileData, &pharmacies)
-	if err != nil {
-		log.Fatal(err)
+	defer file.Close()
+
+	reader := bufio.NewScanner(file)
+	var centers []map[string]interface{}
+	for reader.Scan() {
+		var center map[string]interface{}
+		err = json.Unmarshal(reader.Bytes(), &center)
+		if err != nil {
+			log.Fatal(err)
+		}
+		centers = append(centers, center)
 	}
-	return pharmacies
+	return centers
 }
 
 func minimumDistance(p Point, points []Point) float64 {
@@ -246,7 +259,7 @@ func cosineDistance(p1, p2 Point) float64 {
 func initializeProgress(length int, message string) *progressbar.ProgressBar {
 	bar := progressbar.NewOptions(length,
 		progressbar.OptionEnableColorCodes(true),
-		progressbar.OptionSetDescription("[bold]"+message),
+		progressbar.OptionSetDescription("[blue]"+message),
 		progressbar.OptionSpinnerType(14),
 		progressbar.OptionShowCount(),
 		progressbar.OptionSetWidth(25),
