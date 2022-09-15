@@ -160,29 +160,29 @@ def main():
     geo_df = convert_to_geodataframe(df=configured_df)
 
     print(f"Starting shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
-    for url in track(urls_to_join, description="Performing Spatial Joins secure"):
+    for url in track(urls_to_join, description="Performing Spatial Joins..."):
         gdf = geopandas.read_file(url).to_crs("EPSG:4326")
         geo_df = geopandas.sjoin(geo_df, gdf, how="left", predicate="within")
         geo_df.drop(columns=["index_right"], inplace=True, errors="ignore")
         print(f"Updated shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
 
-    print("Merging in supplemental secure...")
+    print("Merging in supplemental data...")
     geo_df = merge_supplemental_data(df=geo_df)
     print(f"Updated shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
 
-    print("Now joining land use secure..")
+    print("Now joining land use data..")
     landuse_df = geopandas.read_file(landuse_path).to_crs("EPSG:4326")
     geo_df = geopandas.sjoin(geo_df, landuse_df, how="left", predicate="within")
     del landuse_df  # because very large
     print(f"Updated shape -> Rows: {geo_df.shape[0]} Columns: {geo_df.shape[1]}")
 
-    print("Now labeling land use secure...")
+    print("Now labeling land use data...")
     geo_df = label_landuse(df=geo_df)
 
-    print("Now joining death location secure...")
+    print("Now joining death location data...")
     geo_df = merge_death_location_labels(df=geo_df)
 
-    print("Now extracting death date secure...")
+    print("Now extracting death date data...")
     geo_df = extract_date_data(df=geo_df)
 
     print("Classifying hotels/motels...")

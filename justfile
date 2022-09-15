@@ -4,39 +4,31 @@ default:
 
 fetch:
     ./scripts/fetch_release_data.sh
+    ./scripts/fetch_spatial_data.sh
 
 
-build:
-    echo "Building scraper..."
-    go build -o scrape ./cmd/scrape
-    echo "Building distance calculator..."
-    go build -o calculator ./cmd/calculator
-    echo "Done."
-
-
-scrape-centers: build
+scrape-centers:
     echo "Running scraper..."
-    ./scrape
+    go run cmd/scrape/main.go
     echo "Geocoding scraped centers..."
     ./scripts/geocode.sh
     echo "Done."
 
 
-calculate-distances: scrape-centers
+calculate-distances: fetch scrape-centers
     echo "Calculating distances..."
-    ./calculator
-    rm ./calculator
+    go run cmd/calculator/main.go
     echo "Done."
 
 
 spatially-join: calculate-distances
     echo "Spatially joining..."
-    ./scripts/spatially_join.sh
+    python scripts/spatial_join.py
     echo "Done."
 
 report: spatially-join
     echo "Generating report..."
-    pandas_profiling data/records_with_spatial_data.csv reports/profile.html --title (date "+%Y-%m-%d") --pool_size 4
+    pandas_profiling data/records_with_spatial_data.csv reports/profile.html --title (date "+%Y-%m-%d") --minimal
     echo "Done."
 
 
@@ -45,7 +37,4 @@ cleanup:
     rm -r downloads
     # intermediate files (real files are .csv)
     rm secure/*.jsonl
-    # binaries
-    rm ./scrape
-    rm ./calculator
     echo "Done."
