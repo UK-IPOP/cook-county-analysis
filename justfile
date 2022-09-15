@@ -20,10 +20,12 @@ scrape-centers: build
     echo "Geocoding scraped centers..."
     ./scripts/geocode.sh
     rm data/medical_centers.jsonl
+    rm ./scrape
     echo "Done."
 
 
 calculate-distances: build scrape-centers
     echo "Calculating distances..."
     ./calculator
+    rm ./calculator
     echo "Done."
