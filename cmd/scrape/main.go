@@ -87,7 +87,6 @@ func scrape_county_centers(urls []string, writer *bufio.Writer, wg *sync.WaitGro
 			Name:    strings.TrimSpace(name),
 			Address: strings.TrimSpace(address),
 		}
-		log.Println(result)
 
 		jsonData, err := json.Marshal(result)
 		if err != nil {
@@ -125,7 +124,6 @@ func scrape_university_med_centers(writer *bufio.Writer, wg *sync.WaitGroup) {
 			Name:    strings.TrimSpace(name),
 			Address: strings.TrimSpace(address),
 		}
-		log.Println(result)
 
 		jsonData, err := json.Marshal(result)
 		if err != nil {
