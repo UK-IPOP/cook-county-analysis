@@ -5,9 +5,6 @@ current:
 - [x] cleanup gitignore
   - [x] add golang gitignore
 - [x] remove poetry env and config files
-- [x] move xylazine to notebooks
-  - [ ] cleanup xylazine folder, rename to xylazine analysis
-  - [ ] put README inside notebooks folder (and xylazine folder?)
 - [x] use go colly to scrape medical sites
 - [x] use geocoode package + jq to geocode medical sites
 - [x] use geocode package + jq to geocode pharmacies
@@ -30,10 +27,12 @@ current:
     - source: https://datahub.cmap.illinois.gov/dataset/e2bec582-3a98-499b-97b0-75a039de29cc/resource/60bd80da-c2b7-4243-a30b-775729da8714
 - [x] use go to do cosine distance (between lots of things?)
 - [x] use GH codespace for development (i.e. linux environment thus can use poetry for geopandas)
+
+
 - [ ] comment up the golang files
   - [ ] add docstrings
   - [ ] Add a README to each binary folder
-
-
-- how to release/share enhanced data?
-  - too big for github... maybe use git lfs?
+- [x] move xylazine to notebooks
+  - [ ] cleanup xylazine folder, rename to xylazine analysis
+  - [ ] put README inside notebooks folder (and xylazine folder?)
+- [ ] remove justfile
