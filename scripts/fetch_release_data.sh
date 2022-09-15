@@ -10,13 +10,9 @@
 # make if not exists
 mkdir -p downloads
 
-# won't do anything if doesn't exist
-rm downloads/wide_records.jsonl
 
 echo "Fetching release data from github api..."
 gh release download -R uk-ipop/open-data-pipeline -D downloads --pattern 'cook_county_wide_form.csv' --clobber \
     && echo "Converting to jsonlines..." \
-    && cat downloads/cook_county_wide_form.csv | dasel -r csv -w json . | jq -c '.' >> downloads/wide_records.jsonl \
-    && echo "Removing csv file..." \
-    && rm downloads/cook_county_wide_form.csv \
+    && cat downloads/cook_county_wide_form.csv | dasel -r csv -w json . | jq -c '.' > downloads/wide_records.jsonl \
     && echo "Done!"
