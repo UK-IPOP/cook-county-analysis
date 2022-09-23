@@ -29,6 +29,7 @@ Links not provided as these should be easy to find and only certain versions are
 
 Analysis can be found in the `notebooks` folder.
 
+## Citation
 
 If you base your work on any of this code, please cite this repository as follows:
 
