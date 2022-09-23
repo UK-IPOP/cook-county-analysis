@@ -1,5 +1,10 @@
 #! /bin/bash
 
+# simply fetches the spatial data from the city of chicago data portal
+# and unzips it into the downlaods folder
+
+# requires `wget` and `unzip` to be installed see README.md for details
+
 echo "Starting to download "
 
 # make if not exists

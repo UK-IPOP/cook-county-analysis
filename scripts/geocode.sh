@@ -1,6 +1,9 @@
 #! /bin/bash
 
-# this script reads the medical centers file, geocodes them, and writes the results to a new file
+# this script expects you to have scraped the medical centers from the web
+# it will geocode the medical center addresses and write the geocoded results to file
+
+# requires `jq` and `geocoder` to be installed see README.md for details
 
 rm -f secure/geocoded_medical_centers.jsonl
 

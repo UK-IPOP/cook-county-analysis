@@ -5,7 +5,7 @@
 # downloads release assets to downloads dir 
 # AND converts it from csv to jsonlines using `dasel` and `jq`
 
-# requires `gh` cli and `dasel` and `jq` to be installed
+# requires `gh` cli and `dasel` and `jq` to be installed, see README.md for details
 
 # make if not exists
 mkdir -p downloads

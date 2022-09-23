@@ -29,10 +29,9 @@ current:
 - [x] use GH codespace for development (i.e. linux environment thus can use poetry for geopandas)
 
 
-- [ ] comment up the golang files
-  - [ ] add docstrings
-  - [ ] Add a README to each binary folder
+- [x] comment up the golang files
+  - [x] Add a README to each binary folder
 - [x] move xylazine to notebooks
   - [ ] cleanup xylazine folder, rename to xylazine analysis
-  - [ ] put README inside notebooks folder (and xylazine folder?)
-- [ ] remove justfile
+  - [x] put README inside notebooks folder (and xylazine folder?)
+- [x] remove justfile

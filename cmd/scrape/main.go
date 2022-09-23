@@ -1,3 +1,5 @@
+/// This program will scrape medical center address data from the county and university websites
+
 package main
 
 import (
@@ -44,11 +46,13 @@ func main() {
 	writer.Flush()
 }
 
+// ScrapeResult is the result of the scraping the medical centers
 type ScrapeResult struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`
 }
 
+// scrape_urls scrapes the urls for the county centers from the main county page
 func scrape_urls() []string {
 	var urlList []string
 
@@ -72,6 +76,7 @@ func scrape_urls() []string {
 	return urlList
 }
 
+// scrape_county_centers actually scrapes the county centers and collects their address and name
 func scrape_county_centers(urls []string, writer *bufio.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 
@@ -108,6 +113,7 @@ func scrape_county_centers(urls []string, writer *bufio.Writer, wg *sync.WaitGro
 	}
 }
 
+// scrape_university_med_centers scrapes the university medical centers and collects their address and name
 func scrape_university_med_centers(writer *bufio.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 

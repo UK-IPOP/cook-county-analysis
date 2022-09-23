@@ -62,3 +62,4 @@ go.work
 .RData
 .RDataTmp
 
+.Rproj.user

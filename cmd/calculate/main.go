@@ -1,3 +1,6 @@
+/// This program will calculate the nearest pharmacy and medical center to each row in the wide records file
+/// It will also calculate the average distance between each row and all other rows
+
 package main
 
 import (
@@ -89,7 +92,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(fmt.Sprintf("Skipped %d invalid rows", invalidRows))
+	log.Printf("Skipped %d invalid rows", invalidRows)
 
 	// now we have all the rows, and we can calculate the average distance between each point
 	// first just get all the points that we have
@@ -132,6 +135,9 @@ func main() {
 			log.Fatal(err)
 		}
 		err = bar.Add(1)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	err = bar.Finish()
 	if err != nil {
@@ -144,16 +150,20 @@ func main() {
 
 }
 
+// Point is a latitude and longitude
 type Point struct {
 	X float64
 	Y float64
 }
 
+// IndexPoint is a point with an index
 type IndexPoint struct {
 	Index int
 	Point Point
 }
 
+// extractPointFields extracts the latitude and longitude from a row
+// this is smart and searches for the first valid lat/long
 func extractPointFields(row map[string]string) (Point, error) {
 	lat := row["latitude"]
 	long := row["longitude"]
@@ -184,6 +194,7 @@ func extractPointFields(row map[string]string) (Point, error) {
 
 }
 
+// makePoints converts a slice of rows to a slice of points
 func makePoints(records []map[string]interface{}) []Point {
 	var points []Point
 	for _, pharmacy := range records {
@@ -194,6 +205,7 @@ func makePoints(records []map[string]interface{}) []Point {
 	return points
 }
 
+// loadJsonLines loads a jsonl file into a slice of maps
 func loadJsonLines(fpath string) []map[string]interface{} {
 	// read file
 	file, err := os.Open(fpath)
@@ -215,6 +227,7 @@ func loadJsonLines(fpath string) []map[string]interface{} {
 	return centers
 }
 
+// minimumDistance returns the minimum distance between a point and a slice of points
 func minimumDistance(p Point, points []Point) float64 {
 	minDist := math.MaxFloat64
 	for _, point := range points {
@@ -226,6 +239,7 @@ func minimumDistance(p Point, points []Point) float64 {
 	return minDist
 }
 
+// averageDistance returns the average distance between a point and a slice of points
 func averageDistance(p Point, points []IndexPoint) float64 {
 	var totalDist float64
 	var comparisons int
@@ -238,6 +252,7 @@ func averageDistance(p Point, points []IndexPoint) float64 {
 	return average
 }
 
+// cosineDistance returns the cosine distance between two points
 func cosineDistance(p1, p2 Point) float64 {
 	// source: http://www.movable-type.co.uk/scripts/latlong.html
 	// cosine distance
@@ -277,6 +292,7 @@ func initializeProgress(length int, message string) *progressbar.ProgressBar {
 	return bar
 }
 
+// initializeSpinner initializes a pre-configured spinner.
 func initializeSpinner() *progressbar.ProgressBar {
 	bar := progressbar.NewOptions(-1,
 		progressbar.OptionEnableColorCodes(true),
