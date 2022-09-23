@@ -1,3 +1,5 @@
+"""This program performs various spatial joins to the wide form dataset."""
+
 import pandas as pd
 import numpy as np
 import geopandas
@@ -7,12 +9,14 @@ from rich.progress import track
 
 
 def load_records() -> pd.DataFrame:
+    """Load the wide form dataset."""
     source_file = Path("secure") / "records_with_distances.jsonl"
     df = pd.read_json(source_file, lines=True, orient="records")
     return df
 
 
 def apply_composite_lat_long(row) -> tuple[str | None, str | None]:
+    """Apply the composite latitude and longitude to the dataframe."""
     if row["latitude"] and row["longitude"]:
         return row["latitude"], row["longitude"]
     elif row["geocoded_latitude"] and row["geocoded_longitude"]:
@@ -22,6 +26,7 @@ def apply_composite_lat_long(row) -> tuple[str | None, str | None]:
 
 
 def configure_source_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Configure the source data for the spatial joins."""
     coordinates = df.apply(apply_composite_lat_long, axis=1)
     dff = df.copy()
     dff["composite_latitude"] = coordinates.apply(lambda x: x[0])
@@ -30,6 +35,7 @@ def configure_source_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def convert_to_geodataframe(df: pd.DataFrame) -> geopandas.GeoDataFrame:
+    """Convert the dataframe to a geodataframe using lat/long."""
     geo_df = geopandas.GeoDataFrame(
         data=df,
         geometry=geopandas.points_from_xy(
@@ -42,6 +48,7 @@ def convert_to_geodataframe(df: pd.DataFrame) -> geopandas.GeoDataFrame:
 
 
 def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
+    """Label the landuse of the death location."""
     fpath = Path("secure") / "source" / "landuse_data_dictionary.csv"
     data = pd.read_csv(fpath)
     data.set_index("landuse_id", inplace=True)
@@ -60,6 +67,7 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
+    """Merge the death location labels to the dataframe."""
     fpath = Path("secure") / "source" / "death_locations.csv"
     death_locations = pd.read_csv(fpath, low_memory=False)
     death_locations.columns = death_locations.columns.str.lower()
@@ -83,6 +91,7 @@ def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_supplemental_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Merge the supplemental data to the dataframe."""
     community_population = pd.read_csv(
         "https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/0916f1de-ae37-4476-bf4e-6485ba08c975/download/Census2020SupplementCCA.csv"
     )
@@ -93,6 +102,7 @@ def merge_supplemental_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def extract_date_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Extract the date data from the dataframe."""
     dff = df.copy()
     dff["death_datetime"] = dff.death_date.apply(lambda x: pd.to_datetime(x))
     dff["death_time"] = dff.death_datetime.apply(
@@ -108,6 +118,7 @@ def extract_date_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def classify_hotels(x: str) -> bool | None:
+    """Classify the hotels."""
     if pd.isna(x) or type(x) != str:
         return None
     hotel_words = {"hotel", "motel", "holiday inn", "travel lodge"}
@@ -119,6 +130,7 @@ def classify_hotels(x: str) -> bool | None:
 
 
 def make_hot_cold(row: pd.Series, x: str) -> bool:
+    """Make the hot/cold column."""
     if x == "hot":
         hot = row["heat_related"] if pd.notna(row["heat_related"]) else False
         secondary = row["secondarycause"] if pd.notna(row["secondarycause"]) else ""
@@ -136,6 +148,7 @@ def make_hot_cold(row: pd.Series, x: str) -> bool:
 
 
 def duplicated_lat_long(df: pd.DataFrame) -> pd.DataFrame:
+    """Check for duplicated lat/long."""
     dff = df.copy()
     dff["repeated_lat_long"] = dff.duplicated(
         subset=["composite_latitude", "composite_longitude"]
