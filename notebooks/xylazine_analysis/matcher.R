@@ -69,27 +69,27 @@ write.csv(a2, "xylazine_matched_alcohol.csv", row.names = F)
 
 
 
-# cleaning
-df2 <- 
-    df %>% 
-    select(casenumber, age, race, gender, group) %>%
-    filter(complete.cases(.)) %>%
-    mutate(case = case_when(group == "fentanyl" ~ 1, group == "alcohol" ~ 0)) %>% 
-    mutate_if(is.character, as.factor) %>%
-    filter(!is.na(case))
-
-
-# matchit function
-m2 <- matchit(case ~ age + race + gender, data = df2, method = "nearest", distance = "glm", ratio = 3)
-print(summary(m2))
-
-# match table
-a <- match.data(m2)
-a2 <- 
-    a %>% 
-    left_join(df %>% select(casenumber, final_longitude, final_latitude)) %>% 
-    select(matchnumber = subclass, casenumber, age, race, gender, casenumber, final_longitude, final_latitude, group, case, distance, weights) %>% 
-    arrange(matchnumber, desc(case))
-
-# write
-write.csv(a2, "fentanyl_matched_alcohol.csv", row.names = F)
+# # cleaning
+# df2 <- 
+#     df %>% 
+#     select(casenumber, age, race, gender, group) %>%
+#     filter(complete.cases(.)) %>%
+#     mutate(case = case_when(group == "fentanyl" ~ 1, group == "alcohol" ~ 0)) %>% 
+#     mutate_if(is.character, as.factor) %>%
+#     filter(!is.na(case))
+# 
+# 
+# # matchit function
+# m2 <- matchit(case ~ age + race + gender, data = df2, method = "nearest", distance = "glm", ratio = 3)
+# print(summary(m2))
+# 
+# # match table
+# a <- match.data(m2)
+# a2 <- 
+#     a %>% 
+#     left_join(df %>% select(casenumber, final_longitude, final_latitude)) %>% 
+#     select(matchnumber = subclass, casenumber, age, race, gender, casenumber, final_longitude, final_latitude, group, case, distance, weights) %>% 
+#     arrange(matchnumber, desc(case))
+# 
+# # write
+# write.csv(a2, "fentanyl_matched_alcohol.csv", row.names = F)
