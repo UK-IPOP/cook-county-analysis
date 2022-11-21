@@ -64,3 +64,5 @@ go.work
 
 .Rproj.user
 notebooks/xylazine_analysis/xylazine_analysis.Rproj
+
+data/

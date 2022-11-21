@@ -25,13 +25,13 @@ func main() {
 
 	var invalidRows = 0
 
-	pharmacies := loadJsonLines(filepath.Join("secure", "source", "pharmacies.jsonl"))
+	pharmacies := loadJsonLines(filepath.Join("data", "secure", "source", "pharmacies.jsonl"))
 	pharmacyPoints := makePoints(pharmacies)
 
-	medicalCenters := loadJsonLines(filepath.Join("secure", "geocoded_medical_centers.jsonl"))
+	medicalCenters := loadJsonLines(filepath.Join("data", "secure", "geocoded_medical_centers.jsonl"))
 	medicalCenterPoints := makePoints(medicalCenters)
 
-	inFilePath := filepath.Join("downloads", "wide_records.jsonl")
+	inFilePath := filepath.Join("data", "downloads", "wide_records.jsonl")
 	file, err := os.Open(inFilePath)
 	if err != nil {
 		log.Fatal(err)
@@ -116,7 +116,7 @@ func main() {
 	}
 
 	// write to file
-	fpath := filepath.Join("secure", "records_with_distances.jsonl")
+	fpath := filepath.Join("data", "secure", "records_with_distances.jsonl")
 	outFile, err := os.Create(fpath)
 	if err != nil {
 		log.Fatal(err)
@@ -231,7 +231,7 @@ func loadJsonLines(fpath string) []map[string]interface{} {
 func minimumDistance(p Point, points []Point) float64 {
 	minDist := math.MaxFloat64
 	for _, point := range points {
-		dist := cosineDistance(p, point)
+		dist := haversineDistance(p, point)
 		if dist < minDist {
 			minDist = dist
 		}
@@ -244,7 +244,7 @@ func averageDistance(p Point, points []IndexPoint) float64 {
 	var totalDist float64
 	var comparisons int
 	for _, point := range points {
-		dist := cosineDistance(p, point.Point)
+		dist := haversineDistance(p, point.Point)
 		totalDist += dist
 		comparisons++
 	}
@@ -252,10 +252,10 @@ func averageDistance(p Point, points []IndexPoint) float64 {
 	return average
 }
 
-// cosineDistance returns the cosine distance between two points
-func cosineDistance(p1, p2 Point) float64 {
+// haversineDistance returns the haversine distance between two points
+func haversineDistance(p1, p2 Point) float64 {
 	// source: http://www.movable-type.co.uk/scripts/latlong.html
-	// cosine distance
+	// haversine distance
 	R := 6371.0 // km
 	// convert degrees to radians (lat)
 	φ1 := p1.X * math.Pi / 180

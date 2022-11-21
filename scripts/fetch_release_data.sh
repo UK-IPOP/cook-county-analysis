@@ -12,7 +12,7 @@ mkdir -p downloads
 
 
 echo "Fetching release data from github api..."
-gh release download -R uk-ipop/open-data-pipeline -D downloads --pattern 'cook_county_wide_form.csv' --clobber \
+gh release download -R uk-ipop/open-data-pipeline -D data/downloads --pattern 'cook_county_wide_form.csv' --clobber \
     && echo "Converting to jsonlines..." \
-    && cat downloads/cook_county_wide_form.csv | dasel -r csv -w json . | jq -c '.' > downloads/wide_records.jsonl \
+    && cat data/downloads/cook_county_wide_form.csv | dasel -r csv -w json . | jq -c '.' > data/downloads/wide_records.jsonl \
     && echo "Done!"

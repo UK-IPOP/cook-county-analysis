@@ -16,8 +16,8 @@ case_and_controls_match$case <- as.factor(case_and_controls_match$case)
 
 original_rows <- nrow(case_and_controls_match)
 case_and_controls <- case_and_controls_match %>%
-  drop_na("final_latitude") %>%
-  drop_na("final_longitude")
+  drop_na("composite_latitude") %>%
+  drop_na("composite_longitude")
 filtered_rows <- nrow(case_and_controls)
 cat("Ommited", original_rows - filtered_rows, "(case) rows because they contained nulls.\n")
 
@@ -33,7 +33,7 @@ stopifnot(nrow(case_and_controls) == nrow(cases) + nrow(controls))
 
 # latitude is Y axis
 # make pattern
-case_pattern <- ppp(cases$final_longitude, cases$final_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
+case_pattern <- ppp(cases$composite_longitude, cases$composite_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
 
 # visualize pattern
 summary(case_pattern)
@@ -50,7 +50,7 @@ plot(env1)
 
 # latitude is Y axis
 # make pattern
-control_pattern <- ppp(controls$final_longitude, controls$final_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
+control_pattern <- ppp(controls$composite_longitude, controls$composite_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
 
 # visualize pattern
 summary(control_pattern)
@@ -64,7 +64,7 @@ plot(envelope(control_pattern, Kest, nsim = 999))
 # ----------------
 # compare case_and_controls
 
-combined_pattern <- ppp(case_and_controls$final_longitude, case_and_controls$final_latitude, c(-89, -87), c(41, 43), marks = case_and_controls$case,  checkdup = FALSE)
+combined_pattern <- ppp(case_and_controls$composite_longitude, case_and_controls$composite_latitude, c(-89, -87), c(41, 43), marks = case_and_controls$case,  checkdup = FALSE)
 marks(combined_pattern) <- case_and_controls$case
 
 summary(combined_pattern)
@@ -86,8 +86,8 @@ case_and_controls_match$case <- as.factor(case_and_controls_match$case)
 
 original_rows <- nrow(case_and_controls_match)
 case_and_controls <- case_and_controls_match %>%
-  drop_na("final_latitude") %>%
-  drop_na("final_longitude")
+  drop_na("composite_latitude") %>%
+  drop_na("composite_longitude")
 filtered_rows <- nrow(case_and_controls)
 cat("Ommited", original_rows - filtered_rows, "(case) rows because they contained nulls.\n")
 
@@ -103,7 +103,7 @@ stopifnot(nrow(case_and_controls) == nrow(cases) + nrow(controls))
 
 # latitude is Y axis
 # make pattern
-case_pattern <- ppp(cases$final_longitude, cases$final_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
+case_pattern <- ppp(cases$composite_longitude, cases$composite_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
 
 # visualize pattern
 summary(case_pattern)
@@ -119,7 +119,7 @@ plot(envelope(case_pattern, Kest, nsim = 999))
 
 # latitude is Y axis
 # make pattern
-control_pattern <- ppp(controls$final_longitude, controls$final_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
+control_pattern <- ppp(controls$composite_longitude, controls$composite_latitude, c(-89, -87), c(41, 43), checkdup = FALSE)
 
 # visualize pattern
 summary(control_pattern)
@@ -133,7 +133,7 @@ plot(envelope(control_pattern, Kest, nsim = 999))
 # ----------------
 # compare case_and_controls
 
-combined_pattern <- ppp(case_and_controls$final_longitude, case_and_controls$final_latitude, c(-89, -87), c(41, 43), marks = case_and_controls$case,  checkdup = FALSE)
+combined_pattern <- ppp(case_and_controls$composite_longitude, case_and_controls$composite_latitude, c(-89, -87), c(41, 43), marks = case_and_controls$case,  checkdup = FALSE)
 marks(combined_pattern) <- case_and_controls$case
 
 summary(combined_pattern)

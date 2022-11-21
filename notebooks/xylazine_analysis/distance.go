@@ -11,7 +11,13 @@ import (
 )
 
 func main() {
-	file, err := os.Open("./combined.csv")
+	run("./xylazine_matched_alcohol.csv")
+	run("./xylazine_matched_fentanyl.csv")
+	run("./xylazine_matched_stimulant.csv")
+}
+
+func run(filename string) {
+	file, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
@@ -29,9 +35,9 @@ func main() {
 			continue
 		}
 		// last column is group
-		group := record[len(record)-1]
-		stringLat := record[30]
-		stringLong := record[31]
+		group := record[7]
+		stringLat := record[6]
+		stringLong := record[5]
 		if stringLat == "" || stringLong == "" {
 			continue
 		}
@@ -47,7 +53,6 @@ func main() {
 		groups[group] = append(groups[group], p)
 	}
 
-	var results []Result
 	// for each group, calculate the distance between all points
 	for group, points := range groups {
 		pb := initializeProgress(len(points), "Processing group "+group)
@@ -59,7 +64,7 @@ func main() {
 				if i == j {
 					continue
 				}
-				distance := cosineDistance(p1, p2)
+				distance := haversineDistance(p1, p2)
 				pointDistances = append(pointDistances, distance*0.621371) // convert to miles
 			}
 			// add distances to group
@@ -72,40 +77,9 @@ func main() {
 			totalDist += d
 		}
 		avgDist := totalDist / float64(len(groupDistances))
-		fmt.Println("Average distance for group", group, "is", avgDist, "miles across", len(points), "points")
-
-		results = append(results, Result{Group: group, AvgDistance: avgDist, NumPoints: len(points)})
+		roundedDist := fmt.Sprintf("%.2f", avgDist)
+		fmt.Println("Average distance for group", group, "is", roundedDist, "miles across", len(points), "points")
 	}
-
-	// write results to csv file
-	f, err := os.Create("./distance_results.csv")
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	w := csv.NewWriter(f)
-	defer w.Flush()
-
-	// write header
-	err = w.Write([]string{"group", "avg_distance(miles)", "num_points"})
-	if err != nil {
-		panic(err)
-	}
-
-	// write results
-	for _, result := range results {
-		err = w.Write([]string{result.Group, fmt.Sprintf("%f", result.AvgDistance), fmt.Sprintf("%d", result.NumPoints)})
-		if err != nil {
-			panic(err)
-		}
-	}
-}
-
-type Result struct {
-	Group       string
-	AvgDistance float64
-	NumPoints   int
 }
 
 // Point is a latitude and longitude
@@ -115,10 +89,10 @@ type Point struct {
 	Group string
 }
 
-// cosineDistance returns the cosine distance between two points
-func cosineDistance(p1, p2 Point) float64 {
+// haversineDistance returns the haversine distance between two points
+func haversineDistance(p1, p2 Point) float64 {
 	// source: http://www.movable-type.co.uk/scripts/latlong.html
-	// cosine distance
+	// haversine distance
 	R := 6371.0 // km
 	// convert degrees to radians (lat)
 	φ1 := p1.X * math.Pi / 180

@@ -10,7 +10,7 @@ from rich.progress import track
 
 def load_records() -> pd.DataFrame:
     """Load the wide form dataset."""
-    source_file = Path("secure") / "records_with_distances.jsonl"
+    source_file = Path("data") / "secure" / "records_with_distances.jsonl"
     df = pd.read_json(source_file, lines=True, orient="records")
     return df
 
@@ -49,7 +49,7 @@ def convert_to_geodataframe(df: pd.DataFrame) -> geopandas.GeoDataFrame:
 
 def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
     """Label the landuse of the death location."""
-    fpath = Path("secure") / "source" / "landuse_data_dictionary.csv"
+    fpath = Path("data") / "secure" / "source" / "landuse_data_dictionary.csv"
     data = pd.read_csv(fpath)
     data.set_index("landuse_id", inplace=True)
     data_dict = data.to_dict("index")
@@ -68,7 +68,7 @@ def label_landuse(df: pd.DataFrame) -> pd.DataFrame:
 
 def merge_death_location_labels(df: pd.DataFrame) -> pd.DataFrame:
     """Merge the death location labels to the dataframe."""
-    fpath = Path("secure") / "source" / "death_locations.csv"
+    fpath = Path("data") / "secure" / "source" / "death_locations.csv"
     death_locations = pd.read_csv(fpath, low_memory=False)
     death_locations.columns = death_locations.columns.str.lower()
 
@@ -161,10 +161,10 @@ def main():
         "https://gis.cookcountyil.gov/traditional/rest/services/politicalBoundary/MapServer/2/query?outFields=*&where=1%3D1&f=geojson",  # municipalities
         "https://data.cityofchicago.org/api/geospatial/bbvz-uum9?method=export&format=GeoJSON",  # neighborhoods
         "https://gis.cookcountyil.gov/traditional/rest/services/cultural/MapServer/7/query?outFields=*&where=1%3D1&f=geojson",  # parks
-        "https://www2.census.gov/geo/tiger/GENZ2018/shp/cb_2018_17_cousub_500k.zip",  # county
-        "https://www2.census.gov/geo/tiger/TIGER2021/TRACT/tl_2021_17_tract.zip",  # census tracts
     ]
-    landuse_path = Path("downloads") / "LUI15_shapefile_v1" / "Landuse2015_CMAP_v1.shp"
+    landuse_path = (
+        Path("data") / "downloads" / "LUI15_shapefile_v1" / "Landuse2015_CMAP_v1.shp"
+    )
 
     df = load_records()
     initial_cols = len(df.columns)
